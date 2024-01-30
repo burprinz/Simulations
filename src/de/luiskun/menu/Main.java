@@ -1,4 +1,4 @@
-package de.luiskun.fallingSand;
+package de.luiskun.menu;
 
 import javax.swing.*;
 

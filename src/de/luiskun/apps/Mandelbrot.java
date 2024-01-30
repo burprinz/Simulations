@@ -1,16 +1,14 @@
-package de.luiskun.mandelbrot;
+package de.luiskun.apps;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
-public class Screen extends JPanel implements Runnable{
+public class Mandelbrot extends Application {
 
-    public static final int WIDTH = 500;
-    public static final int HEIGHT = 500;
+    public static final int WIDTH = 700;
+    public static final int HEIGHT = 700;
     public static final int CENTERX = WIDTH / 2;
     public static final int CENTERY = HEIGHT / 2;
 
@@ -67,9 +65,6 @@ public class Screen extends JPanel implements Runnable{
     private double originR = -0.5;//-0.128;
     private double originI = 0.3;//0.987;
 
-    private Thread thread;
-    private int fps = 60;
-
     private static volatile boolean wPressed = false;
     private static volatile boolean sPressed = false;
     private static volatile boolean aPressed = false;
@@ -77,10 +72,13 @@ public class Screen extends JPanel implements Runnable{
     private static volatile boolean ePressed = false;
     private static volatile boolean qPressed = false;
 
+    String performanceText = "Mode On";
+
+    boolean performanceMode = true;
 
     MouseHandler mh = new MouseHandler();
 
-    public Screen() {
+    public Mandelbrot() {
         this.setPreferredSize(new Dimension(WIDTH + 200, HEIGHT));
         this.setDoubleBuffered(true);
         this.setLayout(null);
@@ -90,7 +88,7 @@ public class Screen extends JPanel implements Runnable{
 
             @Override
             public boolean dispatchKeyEvent(KeyEvent ke) {
-                synchronized (Screen.class) {
+                synchronized (Mandelbrot.class) {
                     switch (ke.getID()) {
                         case KeyEvent.KEY_PRESSED:
                             if (ke.getKeyCode() == KeyEvent.VK_W) {
@@ -119,6 +117,14 @@ public class Screen extends JPanel implements Runnable{
                                 repaint();
                             } else if(ke.getKeyCode() == KeyEvent.VK_4) {
                                 currentPalette = 4;
+                                repaint();
+                            }else if(ke.getKeyCode() == KeyEvent.VK_P) {
+                                performanceMode = !performanceMode;
+                                if (performanceMode) {
+                                    performanceText = "Mode Off";
+                                } else {
+                                    performanceText = "Mode On";
+                                }
                                 repaint();
                             }
                             break;
@@ -151,15 +157,25 @@ public class Screen extends JPanel implements Runnable{
         Graphics2D g2 = (Graphics2D) g;
         g2.setColor(Color.BLACK);
         g2.fillRect(0,0,WIDTH+200,HEIGHT);
-        for (int x = 0; x < WIDTH; x++) {
-            for (int y = 0; y < HEIGHT; y++) {
-                updatePoint(x, y, g2);
+        if(!performanceMode) {
+            for (int x = 0; x < WIDTH; x++) {
+                for (int y = 0; y < HEIGHT; y++) {
+                    updatePoint(x, y, g2);
+                }
+            }
+        } else {
+            for (int x = 150; x < WIDTH-150; x++) {
+                for (int y = 150; y < HEIGHT-150; y++) {
+                    updatePoint(x, y, g2);
+                }
             }
         }
+
 
         g2.setColor(Color.BLACK);
         g2.setFont(g2.getFont().deriveFont(Font.BOLD, 20));
         g2.drawString("Zoom Faktor: " + scaleFactor, 5, 20);
+
 
         g2.setColor(Color.WHITE);
         int x = WIDTH + 10;
@@ -175,10 +191,15 @@ public class Screen extends JPanel implements Runnable{
         g2.drawString("                   center", x, y);
         y += 25;
         g2.drawString("0-4 = Colors", x, y);
+        y += 25;
+        g2.drawString("p = Performance", x, y);
+        y += 25;
+        g2.drawString("      " + performanceText, x, y);
+
 
     }
 
-    private void update() {
+    public void update() {
         if (ePressed) {
             scaleFactor /= 1.1;
         } else if (qPressed) {
@@ -246,56 +267,20 @@ public class Screen extends JPanel implements Runnable{
 
     }
 
-    public void startThread() {
-        thread = new Thread(this);
-        thread.start();
-    }
-
-    @Override
-    public void run() {
-        double drawInterval = 1000000000 / fps; // 0.0166s
-        double delta = 0;
-        double lastTime = System.nanoTime();
-        double currentTime;
-        while (thread != null) {
-            currentTime = System.nanoTime();
-            delta += (currentTime - lastTime) / drawInterval;
-            lastTime = currentTime;
-            if (delta >= 1) {
-                update();
-                repaint();
-                delta--;
-            }
-        }
-    }
-
     private double[] screenToWorld(double x, double y) {
         double r = originR + (x - CENTERX) * scaleFactor;
         double i = originI - (y - CENTERY) * scaleFactor;
         return new double[] {r, i};
     }
 
-    public void startZoom() {
-        /*
-        while(true) {
-            this.repaint();
-            scaleFactor = scaleFactor / factor;
-            try {
-                Thread.sleep(5000);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        }
-
-         */
-    }
-
     private void zoom() {
         Point b = getMousePosition();
-        double[] worldPos = screenToWorld(b.getX(), b.getY());
-        originR = worldPos[0];
-        originI = worldPos[1];
-        this.repaint();
+        if (b != null) {
+            double[] worldPos = screenToWorld(b.getX(), b.getY());
+            originR = worldPos[0];
+            originI = worldPos[1];
+            this.repaint();
+        }
     }
 
     private class MouseHandler implements MouseListener {
