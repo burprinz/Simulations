@@ -28,6 +28,8 @@ public class FallingSand extends Application{
     int spawnRadius = 1;
     int expRadius = 1;
 
+    private int colormode;
+
     private MouseHandler mh = new MouseHandler();
     public FallingSand() {
         this.setPreferredSize(new Dimension(WIDTH, HEIGHT));
@@ -68,6 +70,9 @@ public class FallingSand extends Application{
                                 case KeyEvent.VK_9:
                                     spawnRadius = 8;
                                     break;
+                                case KeyEvent.VK_0:
+                                    spawnRadius = 16;
+                                    break;
                                 case KeyEvent.VK_A:
                                     expRadius = 1;
                                     break;
@@ -85,6 +90,12 @@ public class FallingSand extends Application{
                                     break;
                                 case KeyEvent.VK_F:
                                     expRadius = 40;
+                                    break;
+                                case KeyEvent.VK_H:
+                                    colormode = 0;
+                                    break;
+                                case KeyEvent.VK_I:
+                                    colormode = 1;
                                     break;
                             }
                             break;
@@ -118,7 +129,7 @@ public class FallingSand extends Application{
         for (int x = 0; x < cols; x++) {
             for (int y = 0; y < rows; y++) {
                 if (grid[x][y] > 0) {
-                    g2.setColor(colors[grid[x][y]-1]);
+                    g2.setColor(valueToColor(grid[x][y]));
                     g2.fillRect(x * w, y * w, w, w);
                 }
                 g2.setColor(Color.WHITE);
@@ -132,7 +143,7 @@ public class FallingSand extends Application{
         int y = 25;
         g2.drawString("1-4=Field Size", x, y);
         y += 30;
-        g2.drawString("6-9=Spawn Radius", x, y);
+        g2.drawString("6-0=Spawn Radius", x, y);
         y += 30;
         g2.drawString("a-f=Explosion Radius", x, y);
         y += 30;
@@ -145,6 +156,9 @@ public class FallingSand extends Application{
         g2.drawString("Backspace = Back to", x, y);
         y += 25;
         g2.drawString("                          Menu", x, y);
+        y += 25;
+        g2.drawString("Z = Back", x, y);
+
 
         y += 100;
         g2.drawString("Sandsize = " + w, x, y);
@@ -209,32 +223,26 @@ public class FallingSand extends Application{
         if (mh.pressed) {
             Point b = this.getMousePosition();
 
-            colorUpdateCount++;
-            if(colorUpdateCount > 100) {
-                colorUpdateCount = 0;
-                val++;
-                if(val > colors.length) {
-                    val = 1;
-                }
-            }
-
-
             if (b != null) {
                 int mCol = (int) Math.floor(b.getX() / w);
                 int mRow = (int) Math.floor(b.getY() / w);
 
                 if(mCol >= 0 && mCol < cols && mRow >= 0 && mRow < rows) {
-                        for (int y = mRow - spawnRadius; y <= mRow + spawnRadius; y++) {
-                            for (int x = mCol - spawnRadius; x <= mCol + spawnRadius; x++) {
-                                if(x >= 0 && x < cols && y >= 0 && y < rows && grid[x][y] == 0 && nextGrid[x][y] == 0) {
-                                    nextGrid[x][y] = val;
-                                }
+                    int val = getCurrentColor();
+                    for (int y = mRow - spawnRadius; y <= mRow + spawnRadius; y++) {
+                        for (int x = mCol - spawnRadius; x <= mCol + spawnRadius; x++) {
+                            boolean xInBorder = x >= 0 && x < cols;
+                            boolean yInBorder = y >= 0 && y < rows;
+                            if(xInBorder && yInBorder && grid[x][y] == 0 && nextGrid[x][y] == 0) {
+                                nextGrid[x][y] = val;
                             }
                         }
+                    }
                 }
             }
         }
 
+        /*
         if (mh.right) {
             Point b = this.getMousePosition();
             if (b != null) {
@@ -251,7 +259,9 @@ public class FallingSand extends Application{
                     }
                 }
             }
+
         }
+        */
 
         grid = nextGrid;
 
@@ -260,6 +270,54 @@ public class FallingSand extends Application{
 
     int colorUpdateCount;
     int val = 1;
+    int maxRainbow = 100;
+
+    private int getCurrentColor() {
+        int maxVal;
+        int updateBorder;
+
+        // Borderbedingungen berechnen
+        if (colormode == 0) {
+            maxVal = colors.length;
+            updateBorder = 100;
+        } else {
+            // RGB
+            maxVal = maxRainbow;
+            updateBorder = 10;
+        }
+
+        // Farbenposition updaten, wenn noetig
+        colorUpdateCount++;
+        if (colorUpdateCount > updateBorder) {
+            colorUpdateCount = 0;
+            val++;
+            if (val > maxVal) {
+                val = 1;
+            }
+        }
+        return val;
+    }
+
+    private Color valueToColor(int val) {
+
+        int max = colormode==0? colors.length:maxRainbow;
+
+        if (val > max) {
+            val = max;
+        }
+        if (val < 1) {
+            val = 1;
+        }
+
+        // Index startet bei 0
+        val--;
+
+        if (colormode == 0) {
+            return colors[val];
+        } else {
+            return new Color(Color.HSBtoRGB(1f / (float) maxRainbow * val, 1f, 1f));
+        }
+    }
 
     public class MouseHandler implements MouseListener {
 

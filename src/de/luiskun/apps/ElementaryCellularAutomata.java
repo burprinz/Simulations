@@ -87,7 +87,7 @@ public class ElementaryCellularAutomata extends Application {
 
         g2.setColor(Color.BLACK);
         g2.setFont(g2.getFont().deriveFont(Font.BOLD, 13));
-        g2.drawString("BACKSPACE = Back to menu", 5, HEIGHT - 25);
+        g2.drawString("Z = Back to menu", 5, HEIGHT - 25);
 
         for (int y_ = 0; y_ < generations.size(); y_++) {
             int[] cells = generations.get(y_);
@@ -108,6 +108,11 @@ public class ElementaryCellularAutomata extends Application {
                 int[] nextGen = new int[genSize];
 
                 for(int i = 0; i < genSize; i++) {
+                    if (i < 0 || i >= genSize) {
+                        nextGen[i] = cells[i];
+                        continue;
+                    }
+
                     int left = i-1<0?0:cells[i-1];
                     int right = i+1>=genSize?0:cells[i+1];
                     int state = cells[i];

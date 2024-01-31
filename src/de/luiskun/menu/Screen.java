@@ -36,9 +36,11 @@ public class Screen extends JPanel implements Runnable {
                 synchronized (Mandelbrot.class) {
                     switch (ke.getID()) {
                         case KeyEvent.KEY_PRESSED:
-                            if (ke.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
-                                remove(selected);
-                                selected = null;
+                            if (ke.getKeyCode() == KeyEvent.VK_Z) {
+                                if (selected != null) {
+                                    remove(selected);
+                                    selected = null;
+                                }
                                 showUI();
                                 repaint();
                             }

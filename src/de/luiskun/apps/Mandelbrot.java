@@ -195,6 +195,8 @@ public class Mandelbrot extends Application {
         g2.drawString("p = Performance", x, y);
         y += 25;
         g2.drawString("      " + performanceText, x, y);
+        y += 25;
+        g2.drawString("Z = Quit", x, y);
 
 
     }
