@@ -16,9 +16,12 @@ public class ElementaryCellularAutomata extends Application {
     public static final int HEIGHT = 700;
 
 
+
+
     // Cells and Generation
     private int cellSize = 2;
     private int genSize = HEIGHT / cellSize;
+
     private List<int[]> generations;
     private boolean isInverted;
 
@@ -31,6 +34,10 @@ public class ElementaryCellularAutomata extends Application {
 
     // Listener
     private ButtonHandler bh = new ButtonHandler();
+
+    private JButton hundredEightyTwo;
+
+    private JSlider dotSizeSlider;
 
     public ElementaryCellularAutomata() {
         this.setPreferredSize(new Dimension(WIDTH, HEIGHT));
@@ -59,6 +66,55 @@ public class ElementaryCellularAutomata extends Application {
         invertButton.addActionListener(bh);
         this.add(invertButton);
 
+        String[] presets = {
+                "13",
+                "45",
+                "62",
+                "73",
+                "124",
+                "179",
+                "182",
+                "193",
+                "214",
+                "225",
+                "255"
+        };
+
+        int x = 5;
+        int y = 145;
+
+        for(int i = 0; i < presets.length; i++) {
+            JButton button = new JButton(presets[i]);
+            button.setBounds(x, y, 150, 30);
+            button.setActionCommand(presets[i]);
+            button.addActionListener(bh);
+            this.add(button);
+            y += 40;
+        }
+
+        JLabel sizeInfo = new JLabel("Dot Size");
+        sizeInfo.setBounds(x, y, 150, 15);
+        this.add(sizeInfo);
+
+        y += 15;
+
+        dotSizeSlider = new JSlider();
+        dotSizeSlider.setBounds(x, y, 150, 40);
+        dotSizeSlider.setValue(cellSize);
+        dotSizeSlider.setMinimum(1);
+        dotSizeSlider.setMaximum(15);
+        dotSizeSlider.setMinorTickSpacing(1);
+        dotSizeSlider.setMajorTickSpacing(2);
+        dotSizeSlider.setPaintLabels(true);
+        dotSizeSlider.setPaintTicks(true);
+        dotSizeSlider.addChangeListener(listener -> {
+            int val = dotSizeSlider.getValue();
+            this.cellSize = val;
+            genSize = HEIGHT / cellSize;
+            initNewGen();
+            sizeInfo.setText("Dot Size: " + val);
+        });
+        this.add(dotSizeSlider);
     }
 
     private  void changeRuleset(int num) {
@@ -67,6 +123,10 @@ public class ElementaryCellularAutomata extends Application {
             currentRuleset = "0" + currentRuleset;
         }
 
+        initNewGen();
+    }
+
+    private void initNewGen() {
         generations.clear();
 
         int[] cells = new int[genSize];
@@ -89,12 +149,14 @@ public class ElementaryCellularAutomata extends Application {
         g2.setFont(g2.getFont().deriveFont(Font.BOLD, 13));
         g2.drawString("Z = Back to menu", 5, HEIGHT - 25);
 
-        for (int y_ = 0; y_ < generations.size(); y_++) {
-            int[] cells = generations.get(y_);
-            for (int i = 0; i < genSize; i++) {
-                if (cells[i] == 1) {
-                    // Black
-                    g2.fillRect(200 + i*cellSize,y_ * cellSize,cellSize,cellSize);
+        if (generations.size() != 0 && genSize == generations.get(0).length) {
+            for (int y_ = 0; y_ < generations.size(); y_++) {
+                int[] cells = generations.get(y_);
+                for (int i = 0; i < genSize; i++) {
+                    if (i < cells.length && cells[i] == 1) {
+                        // Black
+                        g2.fillRect(200 + i*cellSize,y_ * cellSize,cellSize,cellSize);
+                    }
                 }
             }
         }
@@ -102,6 +164,9 @@ public class ElementaryCellularAutomata extends Application {
 
     public void update() {
 
+        if (generations.size() != 0 && genSize != generations.get(0).length) {
+            generations.clear();
+        } else {
             if(generations.size() < genSize) {
 
                 int[] cells = generations.get(generations.size()-1);
@@ -122,6 +187,7 @@ public class ElementaryCellularAutomata extends Application {
 
                 generations.add(nextGen);
             }
+        }
     }
 
     private int calculateState(int left, int state, int right) {
@@ -170,6 +236,10 @@ public class ElementaryCellularAutomata extends Application {
                     }
                     changeRuleset(val);
                     break;
+                default:
+                    int num = Integer.parseInt(e.getActionCommand());
+                    ruleSpinner.setValue(num);
+                    changeRuleset(num);
             }
         }
     }

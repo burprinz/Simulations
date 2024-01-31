@@ -1,16 +1,18 @@
 package de.luiskun.menu;
 
-import de.luiskun.apps.Application;
-import de.luiskun.apps.ElementaryCellularAutomata;
-import de.luiskun.apps.FallingSand;
-import de.luiskun.apps.Mandelbrot;
+import de.luiskun.FileHandler;
+import de.luiskun.apps.*;
 
 import javax.swing.*;
 import java.awt.*;
 
+import java.util.List;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 
 public class Screen extends JPanel implements Runnable {
 
@@ -22,12 +24,35 @@ public class Screen extends JPanel implements Runnable {
     Application selected;
     private ButtonHandler bh = new ButtonHandler();
 
-    private JButton mandelbrotB, elemCelAutoB, fallingSandB;
+    private JButton mandelbrotB, elemCelAutoB, fallingSandB, timesTablesCarB;
+
+    private BufferedImage background;
+
+    List<String> allApplications;
+    List<JButton> buttons;
+
+    int currentPage = 0;
 
     public Screen() {
         this.setPreferredSize(new Dimension(WIDTH, HEIGHT));
         this.setDoubleBuffered(true);
         this.setLayout(null);
+
+        allApplications = new ArrayList<>();
+        allApplications.add("mandelbrot");
+        allApplications.add("elemcelauto");
+        allApplications.add("sandsim");
+        allApplications.add("timestablescar");
+        allApplications.add("emptyslot");
+        allApplications.add("emptyslot");
+        allApplications.add("emptyslot");
+        allApplications.add("emptyslot");
+        allApplications.add("emptyslot");
+        allApplications.add("emptyslot");
+        allApplications.add("emptyslot");
+        allApplications.add("emptyslot");
+
+        background = FileHandler.SetupImage("res/previews/background", WIDTH, HEIGHT);
 
         KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(new KeyEventDispatcher() {
 
@@ -36,13 +61,23 @@ public class Screen extends JPanel implements Runnable {
                 synchronized (Mandelbrot.class) {
                     switch (ke.getID()) {
                         case KeyEvent.KEY_PRESSED:
-                            if (ke.getKeyCode() == KeyEvent.VK_Z) {
-                                if (selected != null) {
-                                    remove(selected);
-                                    selected = null;
-                                }
-                                showUI();
-                                repaint();
+                            switch (ke.getKeyCode()) {
+                                case KeyEvent.VK_Z:
+                                    if (selected != null) {
+                                        remove(selected);
+                                        selected = null;
+                                    }
+                                    showUI();
+                                    repaint();
+                                    break;
+                                case KeyEvent.VK_LEFT:
+                                    currentPage--;
+                                    resetButtons(currentPage);
+                                    break;
+                                case KeyEvent.VK_RIGHT:
+                                    currentPage++;
+                                    resetButtons(currentPage);
+                                    break;
                             }
                             break;
                         case KeyEvent.KEY_RELEASED:
@@ -54,36 +89,90 @@ public class Screen extends JPanel implements Runnable {
             }
         });
 
-        mandelbrotB = new JButton(new ImageIcon("res/previews/mandelbrot.png"));
-        mandelbrotB.setBounds(25, 50, 250, 167);
-        mandelbrotB.setActionCommand("mandelbrot");
-        mandelbrotB.addActionListener(bh);
-        this.add(mandelbrotB);
+        buttons = new ArrayList<>();
 
-        elemCelAutoB = new JButton(new ImageIcon("res/previews/elemcelauto.png"));
-        elemCelAutoB.setBounds(325, 50, 250, 167);
-        elemCelAutoB.setActionCommand("elemCelAuto");
-        elemCelAutoB.addActionListener(bh);
-        this.add(elemCelAutoB);
+        resetButtons(currentPage);
+    }
 
-        fallingSandB = new JButton(new ImageIcon("res/previews/sandsim.png"));
-        fallingSandB.setBounds(625, 50, 250, 167);
-        fallingSandB.setActionCommand("fallingSand");
-        fallingSandB.addActionListener(bh);
-        this.add(fallingSandB);
+    private void resetButtons(int page) {
 
+        if (buttons.size() > 0) {
+            for(JButton b : buttons) {
+                b.removeActionListener(bh);
+                this.remove(b);
+            }
+            buttons.clear();
+        }
+
+        page = getAcualPage(page);
+        this.currentPage = page;
+
+        int amountButtons = getAmountButtons(page);
+
+        int start = page * 9;
+
+        for (int i = 0; i < amountButtons; i++) {
+            // Zur sicherheit (Top-Kommentar)
+            if (i+start >= allApplications.size()) {
+                break;
+            }
+
+            String name = allApplications.get(start + i);
+            int x = 25 + (i%3) * 300;
+            int y = 25 + (i/3) * 217;
+
+            JButton button = new JButton(new ImageIcon("res/previews/" + name + ".png"));
+            button.setBounds(x, y, 250, 167);
+            button.setActionCommand(name);
+            button.addActionListener(bh);
+            buttons.add(button);
+            this.add(button);
+        }
+
+    }
+
+    private int getAcualPage(int page) {
+        final int buttonsPerSite = 9;
+        final int amApps = allApplications.size();
+
+        if (page < 0) {
+            page = 0;
+        }
+
+        int startIndex = page * buttonsPerSite;
+        while (startIndex > amApps) {
+            page--;
+            startIndex = page * buttonsPerSite;
+        }
+        return page;
+    }
+
+    private int getAmountButtons(int page) {
+        final int start = page * 9;
+
+        int count = 0;
+
+        for (int i = start; i < start + 9; i++) {
+            if (i < allApplications.size()) {
+                count++;
+            } else {
+                break;
+            }
+        }
+
+        return count;
     }
 
     public void hideUI() {
-        mandelbrotB.setVisible(false);
-        elemCelAutoB.setVisible(false);
-        fallingSandB.setVisible(false);
+        for (JButton b : buttons) {
+            b.setVisible(false);
+        }
     }
 
     public void showUI() {
-        mandelbrotB.setVisible(true);
-        elemCelAutoB.setVisible(true);
-        fallingSandB.setVisible(true);
+        for (JButton b : buttons) {
+            b.setVisible(true);
+        }
     }
 
     public void startThread() {
@@ -105,8 +194,10 @@ public class Screen extends JPanel implements Runnable {
         if (selected == null) {
 
             Graphics2D g2 = (Graphics2D) g;
-            g2.setColor(Color.WHITE);
+            g2.setColor(Color.DARK_GRAY);
             g2.fillRect(0, 0, WIDTH, HEIGHT);
+
+            g2.drawImage(background, 0, 0, null);
 
         } else {
             selected.repaint();
@@ -135,20 +226,27 @@ public class Screen extends JPanel implements Runnable {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            switch (e.getActionCommand()) {
-                case "mandelbrot":
-                    selected = new Mandelbrot();
-                    break;
-                case "elemCelAuto":
-                    selected = new ElementaryCellularAutomata();
-                    break;
-                case "fallingSand":
-                    selected = new FallingSand();
-                    break;
+            selected = getApplication(e.getActionCommand());
+            if (selected != null) {
+                selected.setBounds(0,0,WIDTH, HEIGHT);
+                add(selected);
+                hideUI();
             }
-            selected.setBounds(0,0,WIDTH, HEIGHT);
-            add(selected);
-            hideUI();
+        }
+    }
+
+    private Application getApplication(String name) {
+        switch (name) {
+            case "mandelbrot":
+                return new Mandelbrot();
+            case "elemcelauto":
+                return new ElementaryCellularAutomata();
+            case "sandsim":
+                return new FallingSand();
+            case "timestablescar":
+                return new TimesTablesCardioid();
+            default:
+                return null;
         }
     }
 }
