@@ -1,5 +1,7 @@
 package de.luiskun.apps;
 
+import de.luiskun.FileHandler;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -13,6 +15,7 @@ public class Mandelbrot extends Application {
     public static final int CENTERX = WIDTH / 2;
     public static final int CENTERY = HEIGHT / 2;
 
+    /*
     private static final Color[] colors = {
             new Color(255, 0, 0),
             new Color(255,121,1),
@@ -58,6 +61,10 @@ public class Mandelbrot extends Application {
             new Color(242,0,137)
     };
 
+     */
+
+    private Color[] selectedColors;
+
     int currentPalette = 0;
 
     private double scale = 125d;
@@ -80,6 +87,7 @@ public class Mandelbrot extends Application {
     MouseHandler mh = new MouseHandler();
 
     JSlider selectedColor;
+    JComboBox selectedPalette;
 
     public Mandelbrot() {
         this.setPreferredSize(new Dimension(WIDTH + 200, HEIGHT));
@@ -97,6 +105,15 @@ public class Mandelbrot extends Application {
 
         y += 25;
 
+        String[] palletes = FileHandler.getPaletteNames();
+        selectedPalette = new JComboBox(palletes);
+        selectedPalette.setBounds(x, y, 180, 30);
+        selectedPalette.addActionListener(listener -> {
+            selectedColors = FileHandler.loadPalette(selectedPalette.getSelectedItem().toString());
+        });
+        this.add(selectedPalette);
+
+/*
         selectedColor = new JSlider();
         selectedColor.setBounds(x, y, 180, 30);
         selectedColor.setMinimum(0);
@@ -112,6 +129,8 @@ public class Mandelbrot extends Application {
             repaint();
         });
         this.add(selectedColor);
+
+ */
 
         KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(new KeyEventDispatcher() {
 
@@ -265,7 +284,14 @@ public class Mandelbrot extends Application {
             zi = _zi;
             double dist = Math.sqrt(zr * zr + zi * zi);
             if (dist > 2) {
-                Color c;
+                if (selectedColors != null) {
+                    Color c = selectedColors[i % selectedColors.length];
+                    g2.setColor(c);
+                    g2.fillRect((int) x, (int) y, 1, 1);
+                    return;
+                }
+
+                /*
                 switch(currentPalette) {
                     case 0:
                         c = colors[i % colors.length];
@@ -287,9 +313,7 @@ public class Mandelbrot extends Application {
                         c = colors[i % colors.length];
                         break;
                 }
-                g2.setColor(c);
-                g2.fillRect((int) x, (int) y, 1, 1);
-                return;
+                 */
             }
         }
 
