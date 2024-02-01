@@ -105,6 +105,93 @@ public class FallingSand extends Application{
                 }
             }
         });
+
+        initSettings();
+    }
+
+    private JSlider fieldSize, spawnRadiusS;
+
+    private void initSettings() {
+        int x = 715;
+        int y = 15;
+        JLabel fSizeInfo = new JLabel("Field Size: 8");
+        fSizeInfo.setBounds(x, y, 150, 10);
+        fSizeInfo.setForeground(Color.WHITE);
+        this.add(fSizeInfo);
+
+        y += 15;
+
+        fieldSize = new JSlider();
+        fieldSize.setBounds(x, y, 170, 25);
+        fieldSize.setMinimum(0);
+        fieldSize.setMaximum(3);
+        fieldSize.setValue(2);
+        fieldSize.setBackground(Color.BLACK);
+        fieldSize.addChangeListener(listener -> {
+            int val = 0;
+
+            switch (fieldSize.getValue()) {
+                case 0:
+                    val = 2;
+                    break;
+                case 1:
+                    val = 4;
+                    break;
+                case 2:
+                    val = 8;
+                    break;
+                case 3:
+                default:
+                    val = 20;
+                    break;
+            }
+
+            changeSandSize(val);
+            fSizeInfo.setText("Field Size: " + val);
+        });
+        this.add(fieldSize);
+
+        y += 30;
+
+        JLabel spawnRadiusInfo = new JLabel("Spawn Radius: 1");
+        spawnRadiusInfo.setBounds(x, y, 150, 10);
+        spawnRadiusInfo.setForeground(Color.WHITE);
+        this.add(spawnRadiusInfo);
+
+        y += 15;
+
+        spawnRadiusS = new JSlider();
+        spawnRadiusS.setBounds(x, y, 170, 25);
+        spawnRadiusS.setMinimum(0);
+        spawnRadiusS.setMaximum(4);
+        spawnRadiusS.setValue(0);
+        spawnRadiusS.setBackground(Color.BLACK);
+        spawnRadiusS.addChangeListener(listener -> {
+            int val;
+            switch (spawnRadiusS.getValue()) {
+                case 0:
+                    val = 1;
+                    break;
+                case 1:
+                    val = 2;
+                    break;
+                case 2:
+                    val = 4;
+                    break;
+                case 3:
+                    val = 8;
+                    break;
+                case 4:
+                default:
+                    val = 16;
+                    break;
+            }
+            spawnRadius = val;
+            spawnRadiusInfo.setText("Spawn Radius: " + val);
+        });
+        this.add(spawnRadiusS);
+
+
     }
 
     private void changeSandSize(int num) {
@@ -137,10 +224,12 @@ public class FallingSand extends Application{
             }
         }
 
+
         g2.setFont(g2.getFont().deriveFont(Font.BOLD, 17));
         g2.setColor(Color.WHITE);
         int x = 710;
         int y = 25;
+        /**
         g2.drawString("1-4=Field Size", x, y);
         y += 30;
         g2.drawString("6-0=Spawn Radius", x, y);
@@ -159,8 +248,9 @@ public class FallingSand extends Application{
         y += 25;
         g2.drawString("Z = Back", x, y);
 
+         */
 
-        y += 100;
+        y += 325;
         g2.drawString("Sandsize = " + w, x, y);
         y += 30;
         g2.drawString("Spawn Radius = "  +spawnRadius, x, y);

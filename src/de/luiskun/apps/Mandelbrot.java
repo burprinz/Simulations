@@ -1,5 +1,6 @@
 package de.luiskun.apps;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -78,11 +79,39 @@ public class Mandelbrot extends Application {
 
     MouseHandler mh = new MouseHandler();
 
+    JSlider selectedColor;
+
     public Mandelbrot() {
         this.setPreferredSize(new Dimension(WIDTH + 200, HEIGHT));
         this.setDoubleBuffered(true);
         this.setLayout(null);
         this.addMouseListener(mh);
+
+        int x = WIDTH + 10;
+        int y = 175;
+
+        JLabel colorinfo = new JLabel("Color Palette");
+        colorinfo.setBounds(x, y, 150, 20);
+        colorinfo.setForeground(Color.WHITE);
+        this.add(colorinfo);
+
+        y += 25;
+
+        selectedColor = new JSlider();
+        selectedColor.setBounds(x, y, 180, 30);
+        selectedColor.setMinimum(0);
+        selectedColor.setMaximum(4);
+        selectedColor.setValue(0);
+        selectedColor.setMinorTickSpacing(1);
+        selectedColor.setMajorTickSpacing(1);
+        selectedColor.setBackground(Color.BLACK);
+        selectedColor.setForeground(Color.WHITE);
+        selectedColor.addChangeListener(listener -> {
+            int val = selectedColor.getValue();
+            currentPalette = val;
+            repaint();
+        });
+        this.add(selectedColor);
 
         KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(new KeyEventDispatcher() {
 
@@ -190,14 +219,11 @@ public class Mandelbrot extends Application {
         y += 25;
         g2.drawString("                   center", x, y);
         y += 25;
-        g2.drawString("0-4 = Colors", x, y);
-        y += 25;
         g2.drawString("p = Performance", x, y);
         y += 25;
         g2.drawString("      " + performanceText, x, y);
-        y += 25;
+        y += 80;
         g2.drawString("Z = Quit", x, y);
-
 
     }
 
