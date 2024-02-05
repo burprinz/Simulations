@@ -111,26 +111,8 @@ public class Mandelbrot extends Application {
         selectedPalette.addActionListener(listener -> {
             selectedColors = FileHandler.loadPalette(selectedPalette.getSelectedItem().toString());
         });
+        selectedColors = FileHandler.loadPalette(selectedPalette.getSelectedItem().toString());
         this.add(selectedPalette);
-
-/*
-        selectedColor = new JSlider();
-        selectedColor.setBounds(x, y, 180, 30);
-        selectedColor.setMinimum(0);
-        selectedColor.setMaximum(4);
-        selectedColor.setValue(0);
-        selectedColor.setMinorTickSpacing(1);
-        selectedColor.setMajorTickSpacing(1);
-        selectedColor.setBackground(Color.BLACK);
-        selectedColor.setForeground(Color.WHITE);
-        selectedColor.addChangeListener(listener -> {
-            int val = selectedColor.getValue();
-            currentPalette = val;
-            repaint();
-        });
-        this.add(selectedColor);
-
- */
 
         KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(new KeyEventDispatcher() {
 
@@ -153,18 +135,6 @@ public class Mandelbrot extends Application {
                                 qPressed = true;
                             }else if(ke.getKeyCode() == KeyEvent.VK_0) {
                                 currentPalette = 0;
-                                repaint();
-                            } else if(ke.getKeyCode() == KeyEvent.VK_1) {
-                                currentPalette = 1;
-                                repaint();
-                            } else if(ke.getKeyCode() == KeyEvent.VK_2) {
-                                currentPalette = 2;
-                                repaint();
-                            }else if(ke.getKeyCode() == KeyEvent.VK_3) {
-                                currentPalette = 3;
-                                repaint();
-                            } else if(ke.getKeyCode() == KeyEvent.VK_4) {
-                                currentPalette = 4;
                                 repaint();
                             }else if(ke.getKeyCode() == KeyEvent.VK_P) {
                                 performanceMode = !performanceMode;

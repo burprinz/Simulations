@@ -19,6 +19,16 @@ public class Vektor {
         this.y *= r;
     }
 
+    public void add(Vektor v) {
+        this.x += v.x;
+        this.y += v.y;
+    }
+
+    public void divide(double d) {
+        this.x = this.x / d;
+        this.y = this.y / d;
+    }
+
     public int xAsInt() {
         return (int) x;
     }

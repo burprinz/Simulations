@@ -2,6 +2,7 @@ package de.luiskun.menu;
 
 import de.luiskun.FileHandler;
 import de.luiskun.apps.*;
+import de.luiskun.json.Farbpalette;
 
 import javax.swing.*;
 import java.awt.*;
@@ -43,8 +44,8 @@ public class Screen extends JPanel implements Runnable {
         allApplications.add("elemcelauto");
         allApplications.add("sandsim");
         allApplications.add("timestablescar");
-        allApplications.add("emptyslot");
-        allApplications.add("emptyslot");
+        allApplications.add("phyllotaxis");
+        allApplications.add("reactiondiffusion");
         allApplications.add("emptyslot");
         allApplications.add("emptyslot");
         allApplications.add("emptyslot");
@@ -198,7 +199,6 @@ public class Screen extends JPanel implements Runnable {
             g2.fillRect(0, 0, WIDTH, HEIGHT);
 
             g2.drawImage(background, 0, 0, null);
-
         } else {
             selected.repaint();
         }
@@ -245,6 +245,10 @@ public class Screen extends JPanel implements Runnable {
                 return new FallingSand();
             case "timestablescar":
                 return new TimesTablesCardioid();
+            case "phyllotaxis":
+                return new Phyllotaxis();
+            case "reactiondiffusion":
+                    return new ReactionDiffusion();
             default:
                 return null;
         }

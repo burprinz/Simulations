@@ -1,5 +1,6 @@
 package de.luiskun.apps;
 
+import de.luiskun.FileHandler;
 import de.luiskun.Vektor;
 import de.luiskun.menu.Screen;
 
@@ -20,7 +21,7 @@ public class TimesTablesCardioid extends Application{
     private int maxPoints = 500;
     private int total = 200;
     private int pointR = 6;
-
+    private float[] colorset;
 
     public TimesTablesCardioid() {
 
@@ -39,6 +40,8 @@ public class TimesTablesCardioid extends Application{
 
     private JSlider amountPointsSlider, speedSlider;
     private JCheckBox withColors;
+
+    private JComboBox colorSelector;
 
     private void initControlBoard() {
         int x = width + 5;
@@ -98,6 +101,27 @@ public class TimesTablesCardioid extends Application{
 
         y += 35;
 
+        String[] palletes = FileHandler.getPaletteNames();
+
+        String[] goodPallettes = new String[palletes.length - 2];
+        int c = 0;
+        for(int i = 0; i < palletes.length; i++) {
+            if (!palletes[i].equals("rainbow") && !palletes[i].equals("darkyellow")) {
+                goodPallettes[c] = palletes[i];
+                c++;
+            }
+        }
+
+        colorSelector = new JComboBox(goodPallettes);
+        colorSelector.setBounds(x, y, 180, 30);
+        colorSelector.addActionListener(listener -> {
+            colorset = FileHandler.loadHuePalette(colorSelector.getSelectedItem().toString());
+        });
+        colorset = FileHandler.loadHuePalette(colorSelector.getSelectedItem().toString());
+        this.add(colorSelector);
+
+        y += 35;
+
         JLabel backInfo = new JLabel("Z = Menu");
         backInfo.setBounds(x, y, 150, 25);
         this.add(backInfo);
@@ -145,8 +169,21 @@ public class TimesTablesCardioid extends Application{
 
     }
 
-    private float getFactor(float i) {
-        return 1f / (float) total * i;
+    private float getFactor(float pos) {
+        final float amDots = total;
+
+        if(colorset != null) {
+
+            int val = (int) ((colorset.length / amDots) * pos);
+
+            if (val >= colorset.length) {
+                val = colorset.length - 1;
+            }
+
+            return colorset[val];
+        } else {
+            return 1f / amDots * pos;
+        }
     }
 
     private float getLineColor(float color1, float color2) {

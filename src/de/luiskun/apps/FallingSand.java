@@ -1,5 +1,7 @@
 package de.luiskun.apps;
 
+import de.luiskun.FileHandler;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -12,23 +14,20 @@ public class FallingSand extends Application{
     public static final int WIDTH = 900;
     public static final int HEIGHT = 700;
 
-    private static final Color[] colors =  {
-            new Color(10, 17, 36),
-            new Color(18,34,59),
-            new Color(14,59,80),
-            new Color(182,81,13),
-            new Color(205,110,16),
-            new Color(233,134,7)
-    };
-
     private int w = 8;
     public int cols, rows;
-    public int[][] grid;
+    public float[][] grid;
+
+    private float[] currentColors;
 
     int spawnRadius = 1;
     int expRadius = 1;
 
     private int colormode;
+
+    private JSlider fieldSize, spawnRadiusS;
+    private JComboBox colorSelector;
+    private JButton resetButton;
 
     private MouseHandler mh = new MouseHandler();
     public FallingSand() {
@@ -109,12 +108,10 @@ public class FallingSand extends Application{
         initSettings();
     }
 
-    private JSlider fieldSize, spawnRadiusS;
-
     private void initSettings() {
         int x = 715;
         int y = 15;
-        JLabel fSizeInfo = new JLabel("Field Size: 8");
+        JLabel fSizeInfo = new JLabel("Sand Size: 8");
         fSizeInfo.setBounds(x, y, 150, 10);
         fSizeInfo.setForeground(Color.WHITE);
         this.add(fSizeInfo);
@@ -147,7 +144,7 @@ public class FallingSand extends Application{
             }
 
             changeSandSize(val);
-            fSizeInfo.setText("Field Size: " + val);
+            fSizeInfo.setText("Sand Size: " + val);
         });
         this.add(fieldSize);
 
@@ -191,6 +188,35 @@ public class FallingSand extends Application{
         });
         this.add(spawnRadiusS);
 
+        y += 30;
+
+        String[] palletes = FileHandler.getPaletteNames();
+
+        String[] goodPallettes = new String[palletes.length - 2];
+        int c = 0;
+        for(int i = 0; i < palletes.length; i++) {
+            if (!palletes[i].equals("rainbow") && !palletes[i].equals("darkyellow")) {
+                goodPallettes[c] = palletes[i];
+                c++;
+            }
+        }
+
+        colorSelector = new JComboBox(goodPallettes);
+        colorSelector.setBounds(x, y, 180, 30);
+        colorSelector.addActionListener(listener -> {
+            currentColors = FileHandler.loadHuePalette(colorSelector.getSelectedItem().toString());
+        });
+        currentColors = FileHandler.loadHuePalette(colorSelector.getSelectedItem().toString());
+        this.add(colorSelector);
+
+        y += 35;
+
+        resetButton = new JButton("Reset Canvas");
+        resetButton.setBounds(x, y, 180, 30);
+        resetButton.addActionListener(listener -> {
+            resetGrid();
+        });
+        this.add(resetButton);
 
     }
 
@@ -202,7 +228,7 @@ public class FallingSand extends Application{
     private void resetGrid() {
         cols = HEIGHT / w;
         rows = HEIGHT / w;
-        grid = new int[cols][rows];
+        grid = new float[cols][rows];
     }
 
     @Override
@@ -212,60 +238,38 @@ public class FallingSand extends Application{
         g2.setColor(Color.BLACK);
         g2.fillRect(0, 0, WIDTH, HEIGHT);
 
-
-        for (int x = 0; x < cols; x++) {
-            for (int y = 0; y < rows; y++) {
-                if (grid[x][y] > 0) {
-                    g2.setColor(valueToColor(grid[x][y]));
-                    g2.fillRect(x * w, y * w, w, w);
+        if (currentColors != null) {
+            for (int x = 0; x < cols; x++) {
+                for (int y = 0; y < rows; y++) {
+                    if (grid[x][y] > 0) {
+                        g2.setColor(valueToColor(grid[x][y]));
+                        g2.fillRect(x * w, y * w, w, w);
+                    }
                 }
-                g2.setColor(Color.WHITE);
-               // g2.drawRect(x * w, y * w, w, w);
             }
         }
-
 
         g2.setFont(g2.getFont().deriveFont(Font.BOLD, 17));
         g2.setColor(Color.WHITE);
         int x = 710;
         int y = 25;
-        /**
-        g2.drawString("1-4=Field Size", x, y);
-        y += 30;
-        g2.drawString("6-0=Spawn Radius", x, y);
-        y += 30;
-        g2.drawString("a-f=Explosion Radius", x, y);
-        y += 30;
+        /*
         g2.drawString("Left Mouse = Spawn", x, y);
-        y += 30;
-        g2.drawString("Right Mouse =", x, y);
-        y += 25;
-        g2.drawString("                     Explosion", x, y);
         y += 30;
         g2.drawString("Backspace = Back to", x, y);
         y += 25;
-        g2.drawString("                          Menu", x, y);
-        y += 25;
         g2.drawString("Z = Back", x, y);
-
          */
-
-        y += 325;
-        g2.drawString("Sandsize = " + w, x, y);
-        y += 30;
-        g2.drawString("Spawn Radius = "  +spawnRadius, x, y);
-        y += 30;
-        g2.drawString("Explosion Radius = " + expRadius, x, y);
     }
 
     public void update() {
 
 
-        int[][] nextGrid = new int[cols][rows];
+        float[][] nextGrid = new float[cols][rows];
 
         for (int x = 0; x < cols; x++) {
             for (int y = 0; y < rows; y++) {
-                int state = grid[x][y];
+                float state = grid[x][y];
                 if (state > 0) {
 
                     int rndDir = 1;
@@ -310,7 +314,7 @@ public class FallingSand extends Application{
             }
         }
 
-        if (mh.pressed) {
+        if (mh.pressed && currentColors != null) {
             Point b = this.getMousePosition();
 
             if (b != null) {
@@ -318,7 +322,7 @@ public class FallingSand extends Application{
                 int mRow = (int) Math.floor(b.getY() / w);
 
                 if(mCol >= 0 && mCol < cols && mRow >= 0 && mRow < rows) {
-                    int val = getCurrentColor();
+                    float val = getCurrentColor();
                     for (int y = mRow - spawnRadius; y <= mRow + spawnRadius; y++) {
                         for (int x = mCol - spawnRadius; x <= mCol + spawnRadius; x++) {
                             boolean xInBorder = x >= 0 && x < cols;
@@ -332,65 +336,44 @@ public class FallingSand extends Application{
             }
         }
 
-        /*
-        if (mh.right) {
-            Point b = this.getMousePosition();
-            if (b != null) {
-                int mCol = (int) Math.floor(b.getX() / w);
-                int mRow = (int) Math.floor(b.getY() / w);
-
-                if(mCol >= 0 && mCol < cols && mRow >= 0 && mRow < rows) {
-                    for (int y = mRow - expRadius; y <= mRow + expRadius; y++) {
-                        for (int x = mCol - expRadius; x <= mCol + expRadius; x++) {
-                            if(x >= 0 && x < cols && y >= 0 && y < rows && grid[x][y] == 0 && nextGrid[x][y] == 0) {
-                                nextGrid[x][y] = 0;
-                            }
-                        }
-                    }
-                }
-            }
-
-        }
-        */
-
         grid = nextGrid;
 
     }
 
 
     int colorUpdateCount;
-    int val = 1;
+    int val = 0;
     int maxRainbow = 100;
 
-    private int getCurrentColor() {
+    private float getCurrentColor() {
         int maxVal;
         int updateBorder;
+        maxVal = currentColors.length;
 
         // Borderbedingungen berechnen
-        if (colormode == 0) {
-            maxVal = colors.length;
-            updateBorder = 100;
+        if (currentColors.length < 15) {
+            updateBorder = 70;
+        } else if (currentColors.length < 100) {
+            updateBorder = 30;
         } else {
-            // RGB
-            maxVal = maxRainbow;
-            updateBorder = 10;
+            updateBorder = 1;
         }
 
         // Farbenposition updaten, wenn noetig
         colorUpdateCount++;
-        if (colorUpdateCount > updateBorder) {
+        if (colorUpdateCount >= updateBorder) {
             colorUpdateCount = 0;
             val++;
-            if (val > maxVal) {
-                val = 1;
+            if (val >= maxVal) {
+                val = 0;
             }
         }
-        return val;
+        return valueToColor(val);
     }
 
-    private Color valueToColor(int val) {
+    private float valueToColor(int val) {
 
-        int max = colormode==0? colors.length:maxRainbow;
+        int max = colormode==0? currentColors.length:maxRainbow;
 
         if (val > max) {
             val = max;
@@ -402,11 +385,11 @@ public class FallingSand extends Application{
         // Index startet bei 0
         val--;
 
-        if (colormode == 0) {
-            return colors[val];
-        } else {
-            return new Color(Color.HSBtoRGB(1f / (float) maxRainbow * val, 1f, 1f));
-        }
+        return currentColors[val];
+    }
+
+    private Color valueToColor(float val) {
+        return new Color(Color.HSBtoRGB(val, 1f, 1f));
     }
 
     public class MouseHandler implements MouseListener {

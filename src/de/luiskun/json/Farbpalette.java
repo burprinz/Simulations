@@ -10,6 +10,10 @@ public class Farbpalette {
 
     }
 
+    public Farbpalette(List<Farbe> colors) {
+        this.colors = colors;
+    }
+
     public List<Farbe> getColors() {
         return colors;
     }

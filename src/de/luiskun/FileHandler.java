@@ -80,4 +80,21 @@ public class FileHandler {
 
     }
 
+    public static final float[] loadHuePalette(String name) {
+        try {
+            String json = new String(Files.readAllBytes(Paths.get(PALETTE_FOLDER + name + ".txt")));
+            ObjectMapper om = new ObjectMapper();
+            Farbpalette pal = om.readValue(json, Farbpalette.class);
+            List<Farbe> farben = pal.getColors();
+            float[] result = new float[farben.size()];
+            for (int i = 0; i < farben.size(); i++) {
+                result[i] = (float) farben.get(i).getHue();
+            }
+            return result;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 }
