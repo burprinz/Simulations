@@ -12,12 +12,6 @@ import java.util.ArrayList;
 
 public class ElementaryCellularAutomata extends Application {
 
-    public static final int WIDTH = 900;
-    public static final int HEIGHT = 700;
-
-
-
-
     // Cells and Generation
     private int cellSize = 2;
     private int genSize = HEIGHT / cellSize;
@@ -35,14 +29,11 @@ public class ElementaryCellularAutomata extends Application {
     // Listener
     private ButtonHandler bh = new ButtonHandler();
 
-    private JButton hundredEightyTwo;
-
     private JSlider dotSizeSlider;
 
     public ElementaryCellularAutomata() {
-        this.setPreferredSize(new Dimension(WIDTH, HEIGHT));
-        this.setDoubleBuffered(true);
-        this.setLayout(null);
+        super();
+
         generations = new ArrayList<>();
         changeRuleset(0);
 

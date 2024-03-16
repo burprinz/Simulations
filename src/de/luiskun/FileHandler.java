@@ -21,15 +21,13 @@ import java.util.ArrayList;
 
 public class FileHandler {
 
-    private static final String PALETTE_FOLDER = "res/colorpalettes/";
-
     public static BufferedImage SetupImage(String imagePath, int width, int heigth) {
         BufferedImage image = null;
         try {
-            image = ImageIO.read(new File(imagePath + ".png"));
+            image = ImageIO.read(new File(imagePath));
             image = ScaleImage(image, width, heigth);
         } catch (IOException e) {
-            System.out.println(imagePath + ".png");
+            System.out.println("ERROR LOADING IMAGE. PATH: " + imagePath + ".png");
             e.printStackTrace();
         }
         return image;
@@ -41,6 +39,65 @@ public class FileHandler {
         g2.dispose();
         return scaledImage;
     }
+
+    public static BufferedImage[] loadSpriteSheet(String path, int cols, int rows, int w, int h) {
+        BufferedImage sheet;
+        try {
+            sheet = ImageIO.read(new File(path));
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        int spriteW = sheet.getWidth() / cols;
+        int spriteH = sheet.getHeight() / rows;
+
+        BufferedImage[] sprites = new BufferedImage[rows * cols];
+
+        int count = 0;
+
+        for (int y = 0; y < rows; y++) {
+            for (int x = 0; x < cols; x++) {
+                sprites[count] = ScaleImage(sheet.getSubimage(x * spriteW, y * spriteH, spriteW, spriteH), w, h);
+                count++;
+            }
+        }
+
+        return sprites;
+    }
+
+    public static BufferedImage[][] load2DspriteSheet(String path, int cols, int rows, int w, int h) {
+        BufferedImage[] sheet = loadSpriteSheet(path, cols, rows, w, h);
+
+        if(sheet == null) {
+            return null;
+        }
+
+        BufferedImage[][] res = new BufferedImage[cols][rows];
+
+        int count = 0;
+
+        for (int y = 0; y < rows; y++) {
+            for (int x = 0; x < cols; x++) {
+                res[x][y] = sheet[count];
+                count++;
+            }
+        }
+
+        return res;
+    }
+
+
+
+    /**
+     * Dieses Projekt
+     * @param name
+     * @param json
+     */
+
+
+    private static final String PALETTE_FOLDER = "res/colorpalettes/";
 
     public static void savePalette(String name, String json) {
         try {

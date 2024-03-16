@@ -9,7 +9,6 @@ import java.awt.*;
 
 public class TimesTablesCardioid extends Application{
 
-    private int width, height;
     private double r;
     private double factor = 0;
     private double speed = 0;
@@ -24,16 +23,12 @@ public class TimesTablesCardioid extends Application{
     private float[] colorset;
 
     public TimesTablesCardioid() {
+        super();
 
-        this.width = Screen.WIDTH - 200;
-        this.height = Screen.HEIGHT;
-        this.center = new Vektor(width / 2, height / 2);
+        this.center = new Vektor(HEIGHT / 2, HEIGHT / 2);
         this.offset = 8;
-        this.r = height / 2 - this.offset;
+        this.r = HEIGHT / 2 - this.offset;
 
-        this.setPreferredSize(new Dimension(Screen.WIDTH, Screen.HEIGHT));
-        this.setDoubleBuffered(true);
-        this.setLayout(null);
 
         initControlBoard();
     }
@@ -44,7 +39,7 @@ public class TimesTablesCardioid extends Application{
     private JComboBox colorSelector;
 
     private void initControlBoard() {
-        int x = width + 5;
+        int x = HEIGHT + 5;
         int y = 10;
         JLabel amPInfo = new JLabel("Amount Points: " + total);
         amPInfo.setBounds(x, y, 150, 25);
@@ -138,26 +133,26 @@ public class TimesTablesCardioid extends Application{
         Graphics2D g2 = (Graphics2D) g;
 
         g2.setColor(Color.BLACK);
-        g2.fillRect(0, 0, width, height);
+        g2.fillRect(0, 0, HEIGHT, HEIGHT);
 
         g2.setColor(Color.WHITE);
-        g2.fillRect(width, 0, 200, height);
+        g2.fillRect(HEIGHT, 0, 200, HEIGHT);
 
         g2.setStroke(new BasicStroke(2));
-        g2.drawOval(offset, offset, width - 2 * offset, height - 2 * offset);
+        g2.drawOval(offset, offset, HEIGHT - 2 * offset, HEIGHT - 2 * offset);
         g2.setStroke(new BasicStroke(1));
 
 
         for (int i = 0; i < total; i++) {
             Vektor pointPos = Vektor.getPosOnCircle(i, total, r);
-            pointPos = Vektor.toScreen(pointPos, width, height);
+            pointPos = Vektor.toScreen(pointPos, HEIGHT, HEIGHT);
             g2.setColor(colorsAllowed?new Color(Color.HSBtoRGB(getFactor(i), 1f, 1f)):Color.WHITE);
             g2.fillOval(pointPos.xAsInt() - pointR, pointPos.yAsInt() - pointR, 2 * pointR, 2 * pointR);
         }
 
         for (int i = 0; i < total; i++) {
-            Vektor a = Vektor.toScreen(Vektor.getPosOnCircle(i, total, r), width, height);
-            Vektor b = Vektor.toScreen(Vektor.getPosOnCircle(i * factor, total, r), width, height);
+            Vektor a = Vektor.toScreen(Vektor.getPosOnCircle(i, total, r), HEIGHT, HEIGHT);
+            Vektor b = Vektor.toScreen(Vektor.getPosOnCircle(i * factor, total, r), HEIGHT, HEIGHT);
             if (colorsAllowed) {
                 g2.setColor(new Color(Color.HSBtoRGB(getLineColor(getFactor(i), getFactor(i+1)), 1f, 1f)));
             } else {

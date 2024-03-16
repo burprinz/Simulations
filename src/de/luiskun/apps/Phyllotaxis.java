@@ -15,7 +15,6 @@ import java.util.List;
 
 public class Phyllotaxis extends Application{
 
-    int width, height;
     int n;
     int c = 2;
     int dotR = 8;
@@ -38,15 +37,11 @@ public class Phyllotaxis extends Application{
     boolean isRunning = false;
 
     public Phyllotaxis() {
-        this.setPreferredSize(new Dimension(WIDTH + 200, HEIGHT));
-        this.setDoubleBuffered(true);
-        this.setLayout(null);
+        super();
 
-        this.width = Screen.WIDTH - 200;
-        this.height = Screen.HEIGHT;
         dots = new ArrayList<>();
 
-        int x = width + 10;
+        int x = HEIGHT + 10;
         int y = 10;
 
         JLabel dotRInfo = new JLabel("Dot Radius: " + dotR);
@@ -175,12 +170,12 @@ public class Phyllotaxis extends Application{
                 double a = n * angle;
                 double r = c * Math.sqrt(n);
 
-                if(r > width) {
+                if(r > HEIGHT) {
                     break;
                 }
 
-                if (r < width) {
-                    dots.add(new Dotinfo((int) (r * Math.cos(a) + width/2), (int) (r * Math.sin(a) + height/2), r));
+                if (r < HEIGHT) {
+                    dots.add(new Dotinfo((int) (r * Math.cos(a) + HEIGHT/2), (int) (r * Math.sin(a) + HEIGHT/2), r));
                 }
                 n++;
             }
@@ -193,12 +188,12 @@ public class Phyllotaxis extends Application{
         Graphics2D g2 = (Graphics2D) g;
 
         g2.setColor(Color.BLACK);
-        g2.fillRect(0, 0, width + 200, height);
+        g2.fillRect(0, 0, WIDTH, HEIGHT);
         g2.setColor(Color.WHITE);
 
         for(int i = 0; i < dots.size(); i++) {
             if (withColor && currentPalette != null)  {
-                int colorpos = (int)(((double)currentPalette.length / (double) (width/2)) * dots.get(i).r);
+                int colorpos = (int)(((double)currentPalette.length / (double) (HEIGHT/2)) * dots.get(i).r);
                 colorpos = colorpos<currentPalette.length?colorpos:currentPalette.length-1;
                 g2.setColor(currentPalette[colorpos]);
             }
@@ -207,7 +202,7 @@ public class Phyllotaxis extends Application{
         }
 
         g2.setColor(Color.BLACK);
-        g2.fillRect(width, 0,  200, height);
+        g2.fillRect(HEIGHT, 0,  200, HEIGHT);
 
     }
 

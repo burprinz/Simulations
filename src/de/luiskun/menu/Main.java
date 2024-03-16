@@ -1,6 +1,5 @@
 package de.luiskun.menu;
 
-
 import javax.swing.*;
 public class Main {
     public static void main(String[] args) {

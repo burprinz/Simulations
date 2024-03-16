@@ -1,12 +1,14 @@
 package de.luiskun.menu;
 
 import de.luiskun.FileHandler;
+import de.luiskun.apps.WeightedVoronoi;
 import de.luiskun.apps.*;
-import de.luiskun.json.Farbpalette;
+import de.luiskun.games.spaceblaster.SpaceBlaster;
 
 import javax.swing.*;
 import java.awt.*;
 
+import java.io.File;
 import java.util.List;
 
 import java.awt.event.ActionEvent;
@@ -30,9 +32,12 @@ public class Screen extends JPanel implements Runnable {
     private BufferedImage background;
 
     List<String> allApplications;
+    List<String> allGames;
     List<JButton> buttons;
 
     int currentPage = 0;
+
+    int mode = 0;
 
     public Screen() {
         this.setPreferredSize(new Dimension(WIDTH, HEIGHT));
@@ -46,14 +51,20 @@ public class Screen extends JPanel implements Runnable {
         allApplications.add("timestablescar");
         allApplications.add("phyllotaxis");
         allApplications.add("reactiondiffusion");
-        allApplications.add("emptyslot");
-        allApplications.add("emptyslot");
+        allApplications.add("firework");
+        allApplications.add("searching");
         allApplications.add("emptyslot");
         allApplications.add("emptyslot");
         allApplications.add("emptyslot");
         allApplications.add("emptyslot");
 
-        background = FileHandler.SetupImage("res/previews/background", WIDTH, HEIGHT);
+        allGames = new ArrayList<>();
+        allGames.add("emptyslot");
+        allGames.add("emptyslot");
+        allGames.add("emptyslot");
+        allGames.add("emptyslot");
+
+        background = FileHandler.SetupImage("res/previews/background.png", WIDTH, HEIGHT);
 
         KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(new KeyEventDispatcher() {
 
@@ -112,13 +123,15 @@ public class Screen extends JPanel implements Runnable {
 
         int start = page * 9;
 
+        int size = mode==0?allApplications.size():allGames.size();
+
         for (int i = 0; i < amountButtons; i++) {
             // Zur sicherheit (Top-Kommentar)
-            if (i+start >= allApplications.size()) {
+            if (i+start >= size) {
                 break;
             }
 
-            String name = allApplications.get(start + i);
+            String name = mode==0?allApplications.get(start + i):allGames.get(start + i);
             int x = 25 + (i%3) * 300;
             int y = 25 + (i/3) * 217;
 
@@ -128,13 +141,24 @@ public class Screen extends JPanel implements Runnable {
             button.addActionListener(bh);
             buttons.add(button);
             this.add(button);
+
         }
+
+        JButton modeSwitch = new JButton(new ImageIcon(FileHandler.SetupImage("res/icons/controller.png", 50, 50)));
+        modeSwitch.setBounds(WIDTH-55, HEIGHT-55, 50, 50);
+        modeSwitch.setOpaque(false);
+        modeSwitch.setContentAreaFilled(false);
+        modeSwitch.setBorderPainted(false);
+        modeSwitch.setActionCommand("modeSwitch");
+        modeSwitch.addActionListener(bh);
+        buttons.add(modeSwitch);
+        this.add(modeSwitch);
 
     }
 
     private int getAcualPage(int page) {
         final int buttonsPerSite = 9;
-        final int amApps = allApplications.size();
+        final int amApps = mode==0?allApplications.size():allGames.size();
 
         if (page < 0) {
             page = 0;
@@ -150,11 +174,13 @@ public class Screen extends JPanel implements Runnable {
 
     private int getAmountButtons(int page) {
         final int start = page * 9;
+        final int size = mode==0?allApplications.size():allGames.size();
 
         int count = 0;
 
+
         for (int i = start; i < start + 9; i++) {
-            if (i < allApplications.size()) {
+            if (i < size) {
                 count++;
             } else {
                 break;
@@ -165,6 +191,7 @@ public class Screen extends JPanel implements Runnable {
     }
 
     public void hideUI() {
+        resetButtons(currentPage);
         for (JButton b : buttons) {
             b.setVisible(false);
         }
@@ -222,6 +249,12 @@ public class Screen extends JPanel implements Runnable {
         }
     }
 
+    private void switchMode() {
+        mode = mode==0?1:0;
+
+        resetButtons(0);
+    }
+
     private class ButtonHandler implements ActionListener {
 
         @Override
@@ -236,21 +269,37 @@ public class Screen extends JPanel implements Runnable {
     }
 
     private Application getApplication(String name) {
-        switch (name) {
-            case "mandelbrot":
-                return new Mandelbrot();
-            case "elemcelauto":
-                return new ElementaryCellularAutomata();
-            case "sandsim":
-                return new FallingSand();
-            case "timestablescar":
-                return new TimesTablesCardioid();
-            case "phyllotaxis":
-                return new Phyllotaxis();
-            case "reactiondiffusion":
-                    return new ReactionDiffusion();
-            default:
-                return null;
+        if (name.equals("modeSwitch")) {
+            switchMode();
+            return null;
+        } else {
+            if (mode == 0) {
+                switch (name) {
+                    case "mandelbrot":
+                        return new Mandelbrot();
+                    case "elemcelauto":
+                        return new ElementaryCellularAutomata();
+                    case "sandsim":
+                        return new FallingSand();
+                    case "timestablescar":
+                        return new TimesTablesCardioid();
+                    case "phyllotaxis":
+                        return new Phyllotaxis();
+                    case "reactiondiffusion":
+                        return new ReactionDiffusion();
+                    case "firework":
+                        return new Fireworks();
+                    case "searching":
+                        return new Pathfinding();
+                    default:
+                        return new Sandpiles();
+                }
+            } else {
+                switch (name) {
+                    default:
+                        return new SpaceBlaster();
+                }
+            }
         }
     }
 }

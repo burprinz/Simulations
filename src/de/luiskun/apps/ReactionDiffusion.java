@@ -9,8 +9,6 @@ import java.util.Random;
 
 public class ReactionDiffusion extends Application{
 
-    int width, height;
-
     private Chemical[][] grid;
 
     int pixelsize = 2;
@@ -26,12 +24,7 @@ public class ReactionDiffusion extends Application{
     int calcSpeed = 1;
 
     public ReactionDiffusion() {
-        this.setPreferredSize(new Dimension(WIDTH, HEIGHT));
-        this.setDoubleBuffered(true);
-        this.setLayout(null);
-
-        this.width = Screen.WIDTH - 200;
-        this.height = Screen.HEIGHT;
+        super();
 
         resetGrid();
         initControl();
@@ -40,7 +33,7 @@ public class ReactionDiffusion extends Application{
     private void resetGrid() {
 
 
-        Chemical[][] grid = new Chemical[width/pixelsize][height/pixelsize];
+        Chemical[][] grid = new Chemical[HEIGHT/pixelsize][HEIGHT/pixelsize];
 
         for(int x = 0; x < grid.length; x++) {
             for(int y = 0; y < grid[0].length; y++) {
@@ -68,7 +61,7 @@ public class ReactionDiffusion extends Application{
     JButton startB, stopS, resetB;
     private void initControl() {
 
-        int x = width + 10;
+        int x = HEIGHT + 10;
         int y = 10;
 
         JLabel formRadInfo = new JLabel("Form Radius: " + formRadius);
@@ -169,7 +162,7 @@ public class ReactionDiffusion extends Application{
 
         for(int speed = 0; speed < calcSpeed; speed++) {
             if (simulationRunning && grid != null) {
-                Chemical[][]  next = new Chemical[width/pixelsize][height/pixelsize];
+                Chemical[][]  next = new Chemical[HEIGHT/pixelsize][HEIGHT/pixelsize];
 
                 for(int x = 1; x < grid.length-1; x++) {
                     for (int y = 1; y < grid[0].length - 1; y++) {
@@ -207,7 +200,7 @@ public class ReactionDiffusion extends Application{
         Graphics2D g2 = (Graphics2D) g;
 
         g2.setColor(Color.WHITE);
-        g2.fillRect(0, 0, width + 200, height);
+        g2.fillRect(0, 0, WIDTH, HEIGHT);
 
         if(grid != null) {
 

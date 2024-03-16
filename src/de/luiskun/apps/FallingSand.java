@@ -11,9 +11,6 @@ import java.util.Random;
 
 public class FallingSand extends Application{
 
-    public static final int WIDTH = 900;
-    public static final int HEIGHT = 700;
-
     private int w = 8;
     public int cols, rows;
     public float[][] grid;
@@ -31,9 +28,8 @@ public class FallingSand extends Application{
 
     private MouseHandler mh = new MouseHandler();
     public FallingSand() {
-        this.setPreferredSize(new Dimension(WIDTH, HEIGHT));
-        this.setDoubleBuffered(true);
-        this.setLayout(null);
+        super();
+
         this.addMouseListener(mh);
         changeSandSize(w);
 

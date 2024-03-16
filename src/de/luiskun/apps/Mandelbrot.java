@@ -10,58 +10,8 @@ import java.awt.event.MouseListener;
 
 public class Mandelbrot extends Application {
 
-    public static final int WIDTH = 700;
-    public static final int HEIGHT = 700;
     public static final int CENTERX = WIDTH / 2;
     public static final int CENTERY = HEIGHT / 2;
-
-    /*
-    private static final Color[] colors = {
-            new Color(255, 0, 0),
-            new Color(255,121,1),
-            new Color(255,255,11),
-            new Color(34,219,19),
-            new Color(36,48,255),
-            new Color(102,0,146),
-            new Color(100,0,249),
-    };
-
-    private static final Color[] colors2 =  {
-            new Color(10, 17, 36),
-            new Color(18,34,59),
-            new Color(14,59,80),
-            new Color(182,81,13),
-            new Color(205,110,16),
-            new Color(233,134,7)
-    };
-
-    private static final Color[] colors3 =  {
-            new Color(217, 237, 146),
-            new Color(181, 228, 140),
-            new Color(153, 217, 140),
-            new Color(118, 200, 147),
-            new Color(82, 182, 154),
-            new Color(52, 160, 164),
-            new Color(22, 138, 173),
-            new Color(26, 117, 159),
-            new Color(30, 96, 145),
-            new Color(24, 78, 119)
-    };
-
-    private static final Color[] colors4 =  {
-            new Color(45, 0, 247),
-            new Color(106, 0, 244),
-            new Color(137, 0, 242),
-            new Color(161,0,242),
-            new Color(177,0,232),
-            new Color(188,0,221),
-            new Color(209,0,209),
-            new Color(219, 0,182),
-            new Color(229,0,164),
-            new Color(242,0,137)
-    };
-
-     */
 
     private Color[] selectedColors;
 
@@ -85,14 +35,11 @@ public class Mandelbrot extends Application {
     boolean performanceMode = true;
 
     MouseHandler mh = new MouseHandler();
-
-    JSlider selectedColor;
     JComboBox selectedPalette;
 
     public Mandelbrot() {
-        this.setPreferredSize(new Dimension(WIDTH + 200, HEIGHT));
-        this.setDoubleBuffered(true);
-        this.setLayout(null);
+        super();
+
         this.addMouseListener(mh);
 
         int x = WIDTH + 10;
@@ -174,15 +121,15 @@ public class Mandelbrot extends Application {
 
         Graphics2D g2 = (Graphics2D) g;
         g2.setColor(Color.BLACK);
-        g2.fillRect(0,0,WIDTH+200,HEIGHT);
+        g2.fillRect(0,0,WIDTH,HEIGHT);
         if(!performanceMode) {
-            for (int x = 0; x < WIDTH; x++) {
+            for (int x = 0; x < HEIGHT; x++) {
                 for (int y = 0; y < HEIGHT; y++) {
                     updatePoint(x, y, g2);
                 }
             }
         } else {
-            for (int x = 150; x < WIDTH-150; x++) {
+            for (int x = 150; x < HEIGHT-150; x++) {
                 for (int y = 150; y < HEIGHT-150; y++) {
                     updatePoint(x, y, g2);
                 }
@@ -196,7 +143,7 @@ public class Mandelbrot extends Application {
 
 
         g2.setColor(Color.WHITE);
-        int x = WIDTH + 10;
+        int x = HEIGHT + 10;
         int y = 20;
         g2.drawString("WASD = Move", x, y);
         y += 25;
