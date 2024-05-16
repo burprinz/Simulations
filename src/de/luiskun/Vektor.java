@@ -1,5 +1,6 @@
 package de.luiskun;
 
+import java.awt.*;
 import java.util.Random;
 
 public class Vektor {
@@ -8,7 +9,8 @@ public class Vektor {
 
 
     public Vektor() {
-
+        this.x = 0;
+        this.y = 0;
     }
 
     public Vektor(double x, double y) {
@@ -21,6 +23,11 @@ public class Vektor {
         this.y = v.yAsInt();
     }
 
+    public Vektor (Point p) {
+        this.x = p.getX();
+        this.y = p.getY();
+    }
+
     public void mult(double r) {
         this.x *= r;
         this.y *= r;
@@ -31,9 +38,19 @@ public class Vektor {
         this.y += v.y;
     }
 
+    public void sub(Vektor v) {
+        this.x -= v.x;
+        this.y -= v.y;
+    }
+
     public void divide(double d) {
         this.x = this.x / d;
         this.y = this.y / d;
+    }
+
+    public void set(double x, double y) {
+        this.x = x;
+        this.y = y;
     }
 
     public void norm() {
@@ -42,6 +59,11 @@ public class Vektor {
         double cut = 1/dist;
 
         mult(cut);
+    }
+
+    public void limit(double d) {
+        norm();
+        mult(d);
     }
 
     public int xAsInt() {
@@ -116,10 +138,14 @@ public class Vektor {
     }
 
     public static Vektor dir(Vektor start, Vektor finish) {
-        Vektor v = new Vektor(finish.x - start.x, finish.x - start.y);
+        Vektor v = new Vektor(finish.x - start.x, finish.y - start.y);
         v.norm();
 
         return v;
+    }
+
+    public String asString() {
+        return "x:" + x + ",y:" + y;
     }
 
 }

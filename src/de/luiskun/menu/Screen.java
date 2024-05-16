@@ -53,7 +53,8 @@ public class Screen extends JPanel implements Runnable {
         allApplications.add("reactiondiffusion");
         allApplications.add("firework");
         allApplications.add("searching");
-        allApplications.add("emptyslot");
+        allApplications.add("sandpiles");
+        allApplications.add("boids");
         allApplications.add("emptyslot");
         allApplications.add("emptyslot");
         allApplications.add("emptyslot");
@@ -291,8 +292,12 @@ public class Screen extends JPanel implements Runnable {
                         return new Fireworks();
                     case "searching":
                         return new Pathfinding();
-                    default:
+                    case "sandpiles":
                         return new Sandpiles();
+                    case "boids":
+                        return new Boids();
+                    default:
+                        return new Boids();
                 }
             } else {
                 switch (name) {
