@@ -113,6 +113,8 @@ public class Boid {
         Vektor cohesion = cohesion(boids);
         Vektor separation = separation(boids);
 
+        separation.mult(4);
+
         acceleration.add(allignment);
         acceleration.add(cohesion);
         acceleration.add(separation);
