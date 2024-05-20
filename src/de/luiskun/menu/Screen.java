@@ -221,7 +221,6 @@ public class Screen extends JPanel implements Runnable {
     public void paintComponent(Graphics g) {
 
         if (selected == null) {
-
             Graphics2D g2 = (Graphics2D) g;
             g2.setColor(Color.DARK_GRAY);
             g2.fillRect(0, 0, WIDTH, HEIGHT);
@@ -297,7 +296,7 @@ public class Screen extends JPanel implements Runnable {
                     case "boids":
                         return new Boids();
                     default:
-                        return new Boids();
+                        return new BarnsleyFern();
                 }
             } else {
                 switch (name) {
