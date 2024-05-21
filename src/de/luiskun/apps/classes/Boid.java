@@ -152,21 +152,28 @@ public class Boid {
         Vektor pos2 = new Vektor(posisiton);
         Vektor dist2 = new Vektor(-velocity.x, velocity.y);
         dist2.norm();
-        dist2.mult(4);
+        dist2.mult(10);
         pos2.add(dist2);
 
         Vektor pos3 = new Vektor(posisiton);
         Vektor dist3 = new Vektor(velocity.x, -velocity.y);
         dist3.norm();
-        dist3.mult(4);
+        dist3.mult(10);
         pos3.add(dist3);
 
 
         int[] xPos = {pos1.xAsInt(), pos2.xAsInt(), pos3.xAsInt()};
         int[] yPos = {pos1.yAsInt(), pos2.yAsInt(), pos3.yAsInt()};
 
+        g2.setColor(Color.getHSBColor((float) (Vektor.angle(new Vektor(1, 0), velocity) / (2 * Math.PI)), 1, 1));
 
         g2.drawPolygon(xPos, yPos, 3);
+
+        Color c = Color.getHSBColor((float) (Vektor.angle(new Vektor(1, 0), velocity) / (2 * Math.PI)), 1, 1);
+
+        g2.setColor(new Color(c.getRed()/255f, c.getGreen()/255f, c.getBlue()/255f, 0.5f));
+
+        //g2.fillOval(posisiton.xAsInt()-50, posisiton.yAsInt()-50, 100, 100);
 
         //g2.fillOval(posisiton.xAsInt() - radius, posisiton.yAsInt() - radius, 2*radius, 2*radius);
     }

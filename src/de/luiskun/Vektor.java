@@ -148,4 +148,12 @@ public class Vektor {
         return "x:" + x + ",y:" + y;
     }
 
+    public static double skalar(Vektor v1, Vektor v2) {
+        return v1.x * v2.x + v1.y * v2.y;
+    }
+
+    public static double angle(Vektor v1, Vektor v2) {
+        return Math.acos(Math.abs(skalar(v1, v2) / Math.abs(v1.len()*v2.len())));
+    }
+
 }
