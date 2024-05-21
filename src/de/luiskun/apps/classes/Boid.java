@@ -1,6 +1,7 @@
 package de.luiskun.apps.classes;
 
 import de.luiskun.Vektor;
+import de.luiskun.apps.Boids;
 import de.luiskun.menu.Screen;
 
 import java.awt.*;
@@ -10,17 +11,21 @@ import java.util.List;
 public class Boid {
 
     int radius = 8;
-    Vektor posisiton, velocity, acceleration;
+    public Vektor posisiton, velocity, acceleration;
     double maxForce = 0.15;
     double maxSpeed = 2;
 
     double allignSlider = 0, cohesionSlider = 0, separationSlider = 0;
 
-    public Boid() {
+    Boids b;
+
+    public Boid(Boids b, int x, int y) {
+
+        this.b = b;
 
         Random r = new Random();
 
-        this.posisiton = new Vektor(r.nextInt(Screen.WIDTH), r.nextInt(Screen.HEIGHT));
+        this.posisiton = new Vektor(x, y);
         this.velocity = new Vektor(r.nextDouble()*2-1, r.nextDouble()*2-1);
         this.acceleration = new Vektor();
     }
@@ -96,10 +101,10 @@ public class Boid {
     }
 
     public void edges() {
-        if (posisiton.x - radius> Screen.WIDTH) {
+        if (posisiton.x - radius> Screen.WIDTH-Boids.settingsW) {
             posisiton.x = 0 - radius;
         } else if (posisiton.x + radius < 0) {
-            posisiton.x = Screen.WIDTH + radius;
+            posisiton.x = Screen.WIDTH-Boids.settingsW + radius;
         }
         if (posisiton.y - radius > Screen.HEIGHT) {
             posisiton.y = 0 - radius;
@@ -113,7 +118,9 @@ public class Boid {
         Vektor cohesion = cohesion(boids);
         Vektor separation = separation(boids);
 
-        separation.mult(4.5);
+        allignment.mult(b.allImpact);
+        cohesion.mult(b.cohImpact);
+        separation.mult(b.sepImpact);
 
         acceleration.add(allignment);
         acceleration.add(cohesion);
@@ -147,6 +154,7 @@ public class Boid {
         Vektor pos1 = new Vektor(posisiton);
         Vektor dist1 = new Vektor(velocity);
         dist1.norm();
+        dist1.mult(20);
         pos1.add(dist1);
 
         Vektor pos2 = new Vektor(posisiton);
@@ -161,22 +169,15 @@ public class Boid {
         dist3.mult(10);
         pos3.add(dist3);
 
-
         int[] xPos = {pos1.xAsInt(), pos2.xAsInt(), pos3.xAsInt()};
         int[] yPos = {pos1.yAsInt(), pos2.yAsInt(), pos3.yAsInt()};
 
-        g2.setColor(Color.getHSBColor((float) (Vektor.angle(new Vektor(1, 0), velocity) / (2 * Math.PI)), 1, 1));
+        g2.setColor(!b.coloredBoids?Color.WHITE:Color.getHSBColor((float) (Vektor.fullAngle(new Vektor(1, 0), velocity) / (2 * Math.PI)), 1, 1));
 
-        g2.drawPolygon(xPos, yPos, 3);
-
-        Color c = Color.getHSBColor((float) (Vektor.angle(new Vektor(1, 0), velocity) / (2 * Math.PI)), 1, 1);
-
-        g2.setColor(new Color(c.getRed()/255f, c.getGreen()/255f, c.getBlue()/255f, 0.5f));
-
-        //g2.fillOval(posisiton.xAsInt()-50, posisiton.yAsInt()-50, 100, 100);
-
-        //g2.fillOval(posisiton.xAsInt() - radius, posisiton.yAsInt() - radius, 2*radius, 2*radius);
+        if (b.triangleBoid) {
+            g2.fillPolygon(xPos, yPos, 3);
+        } else {
+            g2.fillOval(posisiton.xAsInt() - radius, posisiton.yAsInt() - radius, 2*radius, 2*radius);
+        }
     }
-
-
 }
