@@ -162,7 +162,7 @@ public class Boids extends Application implements RangeSelection {
 
         y += 20;
 
-        separationImpact = new RangePicker(this, 10, 100, (int)(sepImpact*10), "sIm");
+        separationImpact = new RangePicker(this, 10, 150, (int)(sepImpact*10), "sIm");
         separationImpact.setBounds(x, y, w, 25);
         this.add(separationImpact);
 
@@ -204,8 +204,8 @@ public class Boids extends Application implements RangeSelection {
 
         for (int i = 0; i < amBoids; i++) {
 
-            int x = !centerStart?r.nextInt(Screen.WIDTH- Boids.settingsW):WIDTH/2;
-            int y = !centerStart?r.nextInt(Screen.HEIGHT):HEIGHT/2;
+            int x = !centerStart?r.nextInt(Screen.WIDTH- Boids.settingsW):WIDTH/2 - 60 + r.nextInt(120);
+            int y = !centerStart?r.nextInt(Screen.HEIGHT):HEIGHT/2 - 60 + r.nextInt(120);
 
             flock.add(new Boid(this, x, y));
         }
