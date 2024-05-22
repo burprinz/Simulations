@@ -1,6 +1,6 @@
 package de.luiskun.apps.games;
 
-import de.luiskun.apps.sims.Application;
+import de.luiskun.apps.Application;
 
 import java.awt.*;
 

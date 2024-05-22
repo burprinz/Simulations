@@ -1,4 +1,6 @@
-package de.luiskun.apps.sims;
+package de.luiskun.apps;
+
+import de.luiskun.apps.sims.Mandelbrot;
 
 import javax.swing.*;
 import java.awt.*;
@@ -52,6 +54,10 @@ public abstract class Application extends JPanel {
 
 
     public abstract void update();
+
+    public void close() {
+
+    }
 
     @Override
     public abstract void paintComponent(Graphics g);

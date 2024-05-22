@@ -1,7 +1,9 @@
 package de.luiskun.apps.sims;
 
+import de.luiskun.apps.Application;
 import de.luiskun.tools.FileHandler;
 import de.luiskun.apps.sims.classes.Dotinfo;
+import de.luiskun.ui.uiparts.ColorPicker;
 import de.luiskun.ui.uiparts.RangePicker;
 import de.luiskun.ui.uiparts.RangeSelection;
 
@@ -23,14 +25,15 @@ public class Phyllotaxis extends Application implements RangeSelection {
     int dotsPerStep = 1;
     boolean withColor = false;
 
-    Color[] currentPalette;
+    //Color[] currentPalette;
     List<Dotinfo> dots;
 
     ButtonHandler bh = new ButtonHandler();
 
     RangePicker dotRadiusS, expSpeed, dotStep;
     JCheckBox colorAllowed;
-    JComboBox selectedPalette;
+    //JComboBox selectedPalette;
+    ColorPicker colors;
     JLabel expSpeInfo, dotRInfo, dotStepInfo;
 
     boolean isRunning = false;
@@ -90,23 +93,11 @@ public class Phyllotaxis extends Application implements RangeSelection {
 
         y += 30;
 
-        JLabel colorinfo = new JLabel("Color Palette");
-        colorinfo.setBounds(x, y, 150, 15);
-        colorinfo.setForeground(Color.WHITE);
-        this.add(colorinfo);
+        colors = new ColorPicker(180);
+        colors.setBounds(x, y, 180, 50);
+        this.add(colors);
 
-        y += 20;
-
-        String[] palletes = FileHandler.getPaletteNames();
-        selectedPalette = new JComboBox(palletes);
-        selectedPalette.setBounds(x, y, 180, 30);
-        selectedPalette.addActionListener(listener -> {
-            currentPalette = FileHandler.loadPalette(selectedPalette.getSelectedItem().toString());
-        });
-        currentPalette = FileHandler.loadPalette(selectedPalette.getSelectedItem().toString());
-        this.add(selectedPalette);
-
-        y += 35;
+        y += 55;
 
         String[] presets = {
                 "Start",
@@ -163,10 +154,10 @@ public class Phyllotaxis extends Application implements RangeSelection {
         g2.setColor(Color.WHITE);
 
         for(int i = 0; i < dots.size(); i++) {
-            if (withColor && currentPalette != null)  {
-                int colorpos = (int)(((double)currentPalette.length / (double) (HEIGHT/2)) * dots.get(i).r);
-                colorpos = colorpos<currentPalette.length?colorpos:currentPalette.length-1;
-                g2.setColor(currentPalette[colorpos]);
+            if (withColor && colors.cur != null)  {
+                int colorpos = (int)(((double)colors.cur.length / (double) (HEIGHT/2)) * dots.get(i).r);
+                colorpos = colorpos<colors.cur.length?colorpos:colors.cur.length-1;
+                g2.setColor(colors.cur[colorpos]);
             }
 
             g2.fillOval(dots.get(i).x-dotR, dots.get(i).y-dotR, 2*dotR, 2*dotR);

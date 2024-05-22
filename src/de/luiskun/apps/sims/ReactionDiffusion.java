@@ -1,5 +1,6 @@
 package de.luiskun.apps.sims;
 
+import de.luiskun.apps.Application;
 import de.luiskun.apps.sims.classes.Chemical;
 import de.luiskun.ui.uiparts.RangePicker;
 import de.luiskun.ui.uiparts.RangeSelection;
@@ -66,6 +67,7 @@ public class ReactionDiffusion extends Application implements RangeSelection {
         int y = 10;
 
         formRadInfo = new JLabel("Form Radius: " + formRadius);
+        formRadInfo.setForeground(Color.WHITE);
         formRadInfo.setBounds(x, y, 150, 15);
         this.add(formRadInfo);
 
@@ -81,6 +83,7 @@ public class ReactionDiffusion extends Application implements RangeSelection {
 
         bFactInfo = new JLabel("B Factor" + dB);
         bFactInfo.setBounds(x, y, 150, 15);
+        bFactInfo.setForeground(Color.WHITE);
         this.add(bFactInfo);
 
         y += 20;
@@ -94,6 +97,7 @@ public class ReactionDiffusion extends Application implements RangeSelection {
 
         calcSpeedInfo = new JLabel("Calc speed: " + calcSpeed);
         calcSpeedInfo.setBounds(x, y, 150, 15);
+        calcSpeedInfo.setForeground(Color.WHITE);
         this.add(calcSpeedInfo);
 
         y += 20;
@@ -177,6 +181,9 @@ public class ReactionDiffusion extends Application implements RangeSelection {
 
         g2.setColor(Color.WHITE);
         g2.fillRect(0, 0, WIDTH, HEIGHT);
+
+        g2.setColor(Color.BLACK);
+        g2.fillRect(HEIGHT, 0, WIDTH-HEIGHT, HEIGHT);
 
         if(grid != null) {
 

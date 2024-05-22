@@ -1,5 +1,6 @@
 package de.luiskun.apps.sims;
 
+import de.luiskun.apps.Application;
 import de.luiskun.tools.Vektor;
 import de.luiskun.ui.Screen;
 
@@ -8,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.List;
 
-public class BarnsleyFern extends Application{
+public class BarnsleyFern extends Application {
 
     List<Vektor> points;
     boolean first = true;

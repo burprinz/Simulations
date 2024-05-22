@@ -1,5 +1,7 @@
 package de.luiskun.ui;
 
+import de.luiskun.apps.Application;
+import de.luiskun.apps.sorting.*;
 import de.luiskun.tools.FileHandler;
 import de.luiskun.apps.sims.WeightedVoronoi;
 import de.luiskun.apps.sims.*;
@@ -71,10 +73,18 @@ public class Screen extends JPanel implements Runnable {
         allGames.add("emptyslot");
 
         allSortings = new ArrayList<>();
-        allSortings.add("emptyslot");
-        allSortings.add("emptyslot");
-        allSortings.add("emptyslot");
-        allSortings.add("emptyslot");
+        allSortings.add("selectionsort");
+        allSortings.add("bubblesort");
+        allSortings.add("mergesort");
+        allSortings.add("quicksort");
+        allSortings.add("heapsort");
+        allSortings.add("combsort");
+        allSortings.add("cyclesort");
+        allSortings.add("cocktailsort");
+        allSortings.add("pancakesort");
+        allSortings.add("gnomesort");
+        allSortings.add("stoogesort");
+        allSortings.add("oddevensort");
 
         background = FileHandler.SetupImage("res/previews/background.png", WIDTH, HEIGHT);
 
@@ -151,7 +161,16 @@ public class Screen extends JPanel implements Runnable {
                 break;
             }
 
-            String name = mode==0?allApplications.get(start + i):allGames.get(start + i);
+            String name = "";
+
+            if (mode == SIM) {
+                name = allApplications.get(start + i);
+            } else if (mode == GAME) {
+                name = allGames.get(start + i);
+            } else {
+                name = allSortings.get(start + i);
+            }
+
             int x = 25 + (i%3) * 300;
             int y = 25 + (i/3) * 217;
 
@@ -194,11 +213,44 @@ public class Screen extends JPanel implements Runnable {
         buttons.add(simSwitch);
         this.add(simSwitch);
 
+        JButton goLeft = new JButton(new ImageIcon(FileHandler.SetupImage("res/icons/leftarrow.png", 50, 50)));
+        goLeft.setBounds(WIDTH/2 - 150, HEIGHT-55, 50, 50);
+        goLeft.setOpaque(false);
+        goLeft.setContentAreaFilled(false);
+        goLeft.setBorderPainted(false);
+        goLeft.addActionListener(listener -> {
+            currentPage--;
+            resetButtons(currentPage);
+        });
+        buttons.add(goLeft);
+        this.add(goLeft);
+
+        JButton goRight = new JButton(new ImageIcon(FileHandler.SetupImage("res/icons/rightarrow.png", 50, 50)));
+        goRight.setBounds(WIDTH/2 + 100, HEIGHT-55, 50, 50);
+        goRight.setOpaque(false);
+        goRight.setContentAreaFilled(false);
+        goRight.setBorderPainted(false);
+        goRight.addActionListener(listener -> {
+            currentPage++;
+            resetButtons(currentPage);
+        });
+        buttons.add(goRight);
+        this.add(goRight);
+
+
     }
 
     private int getAcualPage(int page) {
         final int buttonsPerSite = 9;
-        final int amApps = mode==0?allApplications.size():allGames.size();
+        int amApps;
+
+        if (mode == SIM) {
+            amApps = allApplications.size();
+        } else if (mode == GAME) {
+            amApps = allGames.size();
+        } else {
+            amApps = allSortings.size();
+        }
 
         if (page < 0) {
             page = 0;
@@ -214,7 +266,15 @@ public class Screen extends JPanel implements Runnable {
 
     private int getAmountButtons(int page) {
         final int start = page * 9;
-        final int size = mode==0?allApplications.size():allGames.size();
+        int size;
+
+        if (mode == SIM) {
+            size = allApplications.size();
+        } else if (mode == GAME) {
+            size = allGames.size();
+        }else {
+            size = allSortings.size();
+        }
 
         int count = 0;
 
@@ -256,6 +316,23 @@ public class Screen extends JPanel implements Runnable {
         }
     }
 
+    private int getAmountPages() {
+        int am;
+
+        if (mode == SIM) {
+            am = allApplications.size()/9;
+            if (allApplications.size()%9>0)am++;
+        } else if (mode == GAME) {
+            am = allGames.size()/9;
+            if (allGames.size()%9>0)am++;
+        } else {
+            am = allSortings.size()/9;
+            if (allSortings.size()%9>0)am++;
+        }
+
+        return am;
+    }
+
     @Override
     public void paintComponent(Graphics g) {
 
@@ -265,6 +342,16 @@ public class Screen extends JPanel implements Runnable {
             g2.fillRect(0, 0, WIDTH, HEIGHT);
 
             g2.drawImage(background, 0, 0, null);
+
+            g2.setColor(Color.WHITE);
+            g2.setFont(g2.getFont().deriveFont(Font.BOLD, 30));
+
+            String text = "Page " + (currentPage+1) + " / " + getAmountPages();
+
+            int xPos = WIDTH/2 - g2.getFontMetrics(g2.getFont()).stringWidth(text)/2;
+            int yPos = HEIGHT - 20;
+            g2.drawString(text, xPos, yPos);
+
         } else {
             selected.repaint();
         }
@@ -352,8 +439,32 @@ public class Screen extends JPanel implements Runnable {
                 }
             } if (mode == SORT) {
                 switch (name) {
+                    case "selectionsort":
+                        return new SelectionSort();
+                    case "bubblesort":
+                        return new Bubblesort();
+                    case "mergesort":
+                        return new MergeSort();
+                    case "quicksort":
+                        return new Quicksort();
+                    case "heapsort":
+                        return new Heapsort();
+                    case "combsort":
+                        return new Combsort();
+                    case "cyclesort":
+                        return new Cyclesort();
+                    case "cocktailsort":
+                        return new Cocktailsort();
+                    case "pancakesort":
+                        return new Pancakesort();
+                    case "gnomesort":
+                        return new Gnomesort();
+                    case "stoogesort":
+                        return new Stoogesort();
+                    case "oddevensort":
+                        return new OddEvenSort();
                     default:
-                        return new SpaceBlaster();
+                        return null;
                 }
             }
         }

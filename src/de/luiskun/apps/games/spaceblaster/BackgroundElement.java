@@ -1,7 +1,7 @@
 package de.luiskun.apps.games.spaceblaster;
 
 import de.luiskun.tools.Vektor;
-import de.luiskun.apps.sims.Application;
+import de.luiskun.apps.Application;
 
 import java.awt.*;
 

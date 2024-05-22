@@ -1,5 +1,6 @@
 package de.luiskun.apps.sims;
 
+import de.luiskun.apps.Application;
 import de.luiskun.ui.uiparts.RangePicker;
 import de.luiskun.ui.uiparts.RangeSelection;
 
@@ -28,6 +29,7 @@ public class Sandpiles extends Application implements RangeSelection {
 
         spL = new JLabel("Update speed:" + speed);
         spL.setBounds(x, y, 190, 15);
+        spL.setForeground(Color.WHITE);
         this.add(spL);
 
         y+=20;

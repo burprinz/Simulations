@@ -1,11 +1,12 @@
 package de.luiskun.apps.sims;
 
+import de.luiskun.apps.Application;
 import de.luiskun.tools.FileHandler;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-public class SpriteTest extends Application{
+public class SpriteTest extends Application {
 
     BufferedImage[][] imgs;
 

@@ -1,5 +1,6 @@
 package de.luiskun.apps.sims;
 
+import de.luiskun.apps.Application;
 import de.luiskun.tools.Vektor;
 import de.luiskun.apps.sims.classes.Boid;
 import de.luiskun.ui.Screen;
