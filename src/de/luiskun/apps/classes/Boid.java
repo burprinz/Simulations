@@ -5,6 +5,7 @@ import de.luiskun.apps.Boids;
 import de.luiskun.menu.Screen;
 
 import java.awt.*;
+import java.awt.geom.Path2D;
 import java.util.Random;
 import java.util.List;
 
@@ -149,8 +150,39 @@ public class Boid {
     }
 
     public void draw(Graphics2D g2) {
-        g2.setColor(Color.WHITE);
+        g2.setColor(!b.coloredBoids?Color.WHITE:Color.getHSBColor((float) (Vektor.fullAngle(new Vektor(1, 0), velocity) / (2 * Math.PI)), 1, 1));
+        if (b.triangleBoid) {
+            drawTriangle(g2);
+        } else {
+            g2.fillOval(posisiton.xAsInt() - radius, posisiton.yAsInt() - radius, 2*radius, 2*radius);
+        }
+    }
 
+    private void drawTriangle(Graphics2D g2) {
+        final int sideLength = 10;
+
+        double startingAngle = Vektor.fullAngle(new Vektor(1, 0), velocity);
+
+        // Erstelle ein gleichseitiges Dreieck
+        Path2D.Double triangle = new Path2D.Double();
+        triangle.moveTo(
+                posisiton.x + sideLength * Math.cos(startingAngle),
+                posisiton.y + sideLength * Math.sin(startingAngle)
+        );
+
+        // Füge die anderen zwei Punkte hinzu
+        for (int i = 1; i < 3; i++) {
+            triangle.lineTo(
+                    posisiton.x + sideLength * Math.cos(startingAngle + i * 2 * Math.PI / 3),
+                    posisiton.y + sideLength * Math.sin(startingAngle + i * 2 * Math.PI / 3)
+            );
+        }
+
+        triangle.closePath();
+        g2.fill(triangle);
+    }
+
+    private void drawTriangle_old(Graphics2D g2) {
         Vektor pos1 = new Vektor(posisiton);
         Vektor dist1 = new Vektor(velocity);
         dist1.norm();
@@ -172,12 +204,6 @@ public class Boid {
         int[] xPos = {pos1.xAsInt(), pos2.xAsInt(), pos3.xAsInt()};
         int[] yPos = {pos1.yAsInt(), pos2.yAsInt(), pos3.yAsInt()};
 
-        g2.setColor(!b.coloredBoids?Color.WHITE:Color.getHSBColor((float) (Vektor.fullAngle(new Vektor(1, 0), velocity) / (2 * Math.PI)), 1, 1));
-
-        if (b.triangleBoid) {
-            g2.fillPolygon(xPos, yPos, 3);
-        } else {
-            g2.fillOval(posisiton.xAsInt() - radius, posisiton.yAsInt() - radius, 2*radius, 2*radius);
-        }
+        g2.fillPolygon(xPos, yPos, 3);
     }
 }
