@@ -53,6 +53,11 @@ public class SpaceBlaster extends Game {
     }
 
     @Override
+    public void gameOver(int score) {
+
+    }
+
+    @Override
     public void update() {
         background.update();
 

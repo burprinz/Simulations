@@ -2,6 +2,7 @@ package de.luiskun.apps.sims;
 
 import de.luiskun.apps.Application;
 import de.luiskun.tools.FileHandler;
+import de.luiskun.ui.uiparts.ColorPicker;
 import de.luiskun.ui.uiparts.RangePicker;
 import de.luiskun.ui.uiparts.RangeSelection;
 
@@ -18,17 +19,13 @@ public class FallingSand extends Application implements RangeSelection {
     public int cols, rows;
     public float[][] grid;
 
-    private float[] currentColors;
-
     int spawnRadius = 1;
     int expRadius = 1;
 
-    private int colormode;
-
     private RangePicker fieldSize, spawnRadiusS;
-    private JComboBox colorSelector;
     private JButton resetButton;
     JLabel fSizeInfo, spawnRadiusInfo;
+    ColorPicker color;
 
     private MouseHandler mh = new MouseHandler();
     public FallingSand() {
@@ -90,12 +87,6 @@ public class FallingSand extends Application implements RangeSelection {
                                 case KeyEvent.VK_F:
                                     expRadius = 40;
                                     break;
-                                case KeyEvent.VK_H:
-                                    colormode = 0;
-                                    break;
-                                case KeyEvent.VK_I:
-                                    colormode = 1;
-                                    break;
                             }
                             break;
                     }
@@ -137,26 +128,11 @@ public class FallingSand extends Application implements RangeSelection {
 
         y += 30;
 
-        String[] palletes = FileHandler.getPaletteNames();
+        color = new ColorPicker(170, true);
+        color.setBounds(x, y, 170, 50);
+        this.add(color);
 
-        String[] goodPallettes = new String[palletes.length - 2];
-        int c = 0;
-        for(int i = 0; i < palletes.length; i++) {
-            if (!palletes[i].equals("rainbow") && !palletes[i].equals("darkyellow")) {
-                goodPallettes[c] = palletes[i];
-                c++;
-            }
-        }
-
-        colorSelector = new JComboBox(goodPallettes);
-        colorSelector.setBounds(x, y, 180, 30);
-        colorSelector.addActionListener(listener -> {
-            currentColors = FileHandler.loadHuePalette(colorSelector.getSelectedItem().toString());
-        });
-        currentColors = FileHandler.loadHuePalette(colorSelector.getSelectedItem().toString());
-        this.add(colorSelector);
-
-        y += 35;
+        y += 55;
 
         resetButton = new JButton("Reset Canvas");
         resetButton.setBounds(x, y, 180, 30);
@@ -185,7 +161,7 @@ public class FallingSand extends Application implements RangeSelection {
         g2.setColor(Color.BLACK);
         g2.fillRect(0, 0, WIDTH, HEIGHT);
 
-        if (currentColors != null) {
+        if (color.hue != null) {
             for (int x = 0; x < cols; x++) {
                 for (int y = 0; y < rows; y++) {
                     if (grid[x][y] > 0) {
@@ -261,7 +237,7 @@ public class FallingSand extends Application implements RangeSelection {
             }
         }
 
-        if (mh.pressed && currentColors != null) {
+        if (mh.pressed && color.hue != null) {
             Point b = this.getMousePosition();
 
             if (b != null) {
@@ -288,52 +264,25 @@ public class FallingSand extends Application implements RangeSelection {
     }
 
 
-    int colorUpdateCount;
+    int colorUpdateCount = 0;
     int val = 0;
-    int maxRainbow = 100;
 
     private float getCurrentColor() {
-        int maxVal;
-        int updateBorder;
-        maxVal = currentColors.length;
 
-        // Borderbedingungen berechnen
-        if (currentColors.length < 15) {
-            updateBorder = 70;
-        } else if (currentColors.length < 100) {
-            updateBorder = 30;
-        } else {
-            updateBorder = 1;
-        }
+        int updateBorder = 500 / (20-w);
 
-        // Farbenposition updaten, wenn noetig
         colorUpdateCount++;
-        if (colorUpdateCount >= updateBorder) {
+        if (colorUpdateCount > updateBorder) {
             colorUpdateCount = 0;
             val++;
-            if (val >= maxVal) {
-                val = 0;
-            }
         }
-        return valueToColor(val);
+        if (val >= color.hue.length) {
+            val = 0;
+        }
+
+        return color.hue[val];
     }
 
-    private float valueToColor(int val) {
-
-        int max = colormode==0? currentColors.length:maxRainbow;
-
-        if (val > max) {
-            val = max;
-        }
-        if (val < 1) {
-            val = 1;
-        }
-
-        // Index startet bei 0
-        val--;
-
-        return currentColors[val];
-    }
 
     private Color valueToColor(float val) {
         return new Color(Color.HSBtoRGB(val, 1f, 1f));

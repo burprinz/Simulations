@@ -1,6 +1,8 @@
 package de.luiskun.ui;
 
 import de.luiskun.apps.Application;
+import de.luiskun.apps.games.centipede.Centipede;
+import de.luiskun.apps.games.snake.Snake;
 import de.luiskun.apps.sorting.*;
 import de.luiskun.tools.FileHandler;
 import de.luiskun.apps.sims.WeightedVoronoi;
@@ -67,7 +69,7 @@ public class Screen extends JPanel implements Runnable {
         allApplications.add("emptyslot");
 
         allGames = new ArrayList<>();
-        allGames.add("emptyslot");
+        allGames.add("snake");
         allGames.add("emptyslot");
         allGames.add("emptyslot");
         allGames.add("emptyslot");
@@ -105,12 +107,16 @@ public class Screen extends JPanel implements Runnable {
                                     repaint();
                                     break;
                                 case KeyEvent.VK_LEFT:
-                                    currentPage--;
-                                    resetButtons(currentPage);
+                                    if (selected == null) {
+                                        currentPage--;
+                                        resetButtons(currentPage);
+                                    }
                                     break;
                                 case KeyEvent.VK_RIGHT:
-                                    currentPage++;
-                                    resetButtons(currentPage);
+                                    if (selected == null) {
+                                        currentPage++;
+                                        resetButtons(currentPage);
+                                    }
                                     break;
                             }
                             break;
@@ -434,8 +440,10 @@ public class Screen extends JPanel implements Runnable {
                 }
             } else if (mode == GAME) {
                 switch (name) {
+                    case "snake":
+                        return new Snake();
                     default:
-                        return new SpaceBlaster();
+                        return new Centipede();
                 }
             } if (mode == SORT) {
                 switch (name) {

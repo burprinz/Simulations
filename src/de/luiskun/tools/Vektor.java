@@ -163,4 +163,8 @@ public class Vektor {
         return Math.atan2(skalar(v1, v2), deteminat(v1, v2)) + Math.PI;
     }
 
+    public static boolean isSameInt(Vektor v1, Vektor v2) {
+        return v1.xAsInt() == v2.xAsInt() && v1.yAsInt() == v2.yAsInt();
+    }
+
 }

@@ -2,6 +2,7 @@ package de.luiskun.apps.sims;
 
 import de.luiskun.apps.Application;
 import de.luiskun.tools.FileHandler;
+import de.luiskun.ui.uiparts.ColorPicker;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,8 +14,6 @@ public class Mandelbrot extends Application {
 
     public static final int CENTERX = WIDTH / 2;
     public static final int CENTERY = HEIGHT / 2;
-
-    private Color[] selectedColors;
 
     int currentPalette = 0;
 
@@ -35,32 +34,20 @@ public class Mandelbrot extends Application {
 
     boolean performanceMode = true;
 
-    MouseHandler mh = new MouseHandler();
-    JComboBox selectedPalette;
+    ColorPicker color;
 
+    MouseHandler mh = new MouseHandler();
     public Mandelbrot() {
         super();
 
         this.addMouseListener(mh);
 
-        int x = WIDTH + 10;
+        int x = HEIGHT + 10;
         int y = 175;
 
-        JLabel colorinfo = new JLabel("Color Palette");
-        colorinfo.setBounds(x, y, 150, 20);
-        colorinfo.setForeground(Color.WHITE);
-        this.add(colorinfo);
-
-        y += 25;
-
-        String[] palletes = FileHandler.getPaletteNames();
-        selectedPalette = new JComboBox(palletes);
-        selectedPalette.setBounds(x, y, 180, 30);
-        selectedPalette.addActionListener(listener -> {
-            selectedColors = FileHandler.loadPalette(selectedPalette.getSelectedItem().toString());
-        });
-        selectedColors = FileHandler.loadPalette(selectedPalette.getSelectedItem().toString());
-        this.add(selectedPalette);
+        color = new ColorPicker(180, false);
+        color.setBounds(x, y, 180, 50);
+        this.add(color);
 
         KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(new KeyEventDispatcher() {
 
@@ -202,8 +189,8 @@ public class Mandelbrot extends Application {
             zi = _zi;
             double dist = Math.sqrt(zr * zr + zi * zi);
             if (dist > 2) {
-                if (selectedColors != null) {
-                    Color c = selectedColors[i % selectedColors.length];
+                if (color.cur != null) {
+                    Color c = color.cur[i % color.cur.length];
                     g2.setColor(c);
                     g2.fillRect((int) x, (int) y, 1, 1);
                     return;

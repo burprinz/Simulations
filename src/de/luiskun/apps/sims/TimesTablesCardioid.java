@@ -3,6 +3,7 @@ package de.luiskun.apps.sims;
 import de.luiskun.apps.Application;
 import de.luiskun.tools.FileHandler;
 import de.luiskun.tools.Vektor;
+import de.luiskun.ui.uiparts.ColorPicker;
 import de.luiskun.ui.uiparts.RangePicker;
 import de.luiskun.ui.uiparts.RangeSelection;
 
@@ -22,7 +23,6 @@ public class TimesTablesCardioid extends Application implements RangeSelection {
     private int maxPoints = 500;
     private int total = 200;
     private int pointR = 6;
-    private float[] colorset;
 
     public TimesTablesCardioid() {
         super();
@@ -40,8 +40,7 @@ public class TimesTablesCardioid extends Application implements RangeSelection {
     private RangePicker amountPointsSlider, speedSlider;
     private JCheckBox withColors;
     private JLabel amPInfo, speedInfo;
-
-    private JComboBox colorSelector;
+    ColorPicker color;
 
     private void initControlBoard() {
         int x = HEIGHT + 5;
@@ -86,26 +85,11 @@ public class TimesTablesCardioid extends Application implements RangeSelection {
 
         y += 35;
 
-        String[] palletes = FileHandler.getPaletteNames();
+        color = new ColorPicker(150, true);
+        color.setBounds(x, y, 150, 50);
+        this.add(color);
 
-        String[] goodPallettes = new String[palletes.length - 2];
-        int c = 0;
-        for(int i = 0; i < palletes.length; i++) {
-            if (!palletes[i].equals("rainbow") && !palletes[i].equals("darkyellow")) {
-                goodPallettes[c] = palletes[i];
-                c++;
-            }
-        }
-
-        colorSelector = new JComboBox(goodPallettes);
-        colorSelector.setBounds(x, y, 180, 30);
-        colorSelector.addActionListener(listener -> {
-            colorset = FileHandler.loadHuePalette(colorSelector.getSelectedItem().toString());
-        });
-        colorset = FileHandler.loadHuePalette(colorSelector.getSelectedItem().toString());
-        this.add(colorSelector);
-
-        y += 35;
+        y += 55;
 
         JLabel backInfo = new JLabel("Z = Menu");
         backInfo.setBounds(x, y, 150, 25);
@@ -155,15 +139,15 @@ public class TimesTablesCardioid extends Application implements RangeSelection {
     private float getFactor(float pos) {
         final float amDots = total;
 
-        if(colorset != null) {
+        if(color.hue != null) {
 
-            int val = (int) ((colorset.length / amDots) * pos);
+            int val = (int) ((color.hue.length / amDots) * pos);
 
-            if (val >= colorset.length) {
-                val = colorset.length - 1;
+            if (val >= color.hue.length) {
+                val = color.hue.length - 1;
             }
 
-            return colorset[val];
+            return color.hue[val];
         } else {
             return 1f / amDots * pos;
         }

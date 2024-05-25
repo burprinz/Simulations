@@ -2,6 +2,7 @@ package de.luiskun.apps.sims;
 
 import de.luiskun.apps.Application;
 import de.luiskun.apps.sims.classes.Chemical;
+import de.luiskun.ui.uiparts.ColorPicker;
 import de.luiskun.ui.uiparts.RangePicker;
 import de.luiskun.ui.uiparts.RangeSelection;
 
@@ -61,6 +62,11 @@ public class ReactionDiffusion extends Application implements RangeSelection {
     RangePicker formRaidiusS, bFactorS, calcSpeedS;
     JButton startB, stopS, resetB;
     JLabel formRadInfo, calcSpeedInfo, bFactInfo;
+    JCheckBox colorAllowed;
+    ColorPicker color;
+
+    boolean withColor;
+
     private void initControl() {
 
         int x = HEIGHT + 10;
@@ -108,6 +114,21 @@ public class ReactionDiffusion extends Application implements RangeSelection {
         this.add(calcSpeedS);
 
         y += 50;
+
+        colorAllowed = new JCheckBox("Colors");
+        colorAllowed.setBounds(x, y, 150, 25);
+        colorAllowed.addActionListener(listener -> {
+            withColor = colorAllowed.isSelected();
+        });
+        this.add(colorAllowed);
+
+        y += 30;
+
+        color = new ColorPicker(150, false);
+        color.setBounds(x, y, 150, 50);
+        this.add(color);
+
+        y += 55;
 
         startB = new JButton("Start");
         startB.setBounds(x, y, 150, 25);
@@ -179,8 +200,19 @@ public class ReactionDiffusion extends Application implements RangeSelection {
     public void paintComponent(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
 
-        g2.setColor(Color.WHITE);
-        g2.fillRect(0, 0, WIDTH, HEIGHT);
+        if (!withColor) {
+            g2.setColor(Color.WHITE);
+            g2.fillRect(0, 0, WIDTH, HEIGHT);
+        } else {
+            int range = (int)(((float)HEIGHT/(float)color.cur.length)/2f);
+            int len = range!=0?color.cur.length:HEIGHT/2;
+            range = range!=0?range:1;
+            for (int i = 0; i < len; i++) {
+                g2.setColor(color.cur[i]);
+                g2.fillRect(i*range, i*range, HEIGHT-2*i*range, HEIGHT-2*i*range);
+            }
+        }
+
 
         g2.setColor(Color.BLACK);
         g2.fillRect(HEIGHT, 0, WIDTH-HEIGHT, HEIGHT);

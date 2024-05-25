@@ -25,14 +25,12 @@ public class Phyllotaxis extends Application implements RangeSelection {
     int dotsPerStep = 1;
     boolean withColor = false;
 
-    //Color[] currentPalette;
     List<Dotinfo> dots;
 
     ButtonHandler bh = new ButtonHandler();
 
     RangePicker dotRadiusS, expSpeed, dotStep;
     JCheckBox colorAllowed;
-    //JComboBox selectedPalette;
     ColorPicker colors;
     JLabel expSpeInfo, dotRInfo, dotStepInfo;
 
@@ -93,7 +91,7 @@ public class Phyllotaxis extends Application implements RangeSelection {
 
         y += 30;
 
-        colors = new ColorPicker(180);
+        colors = new ColorPicker(180, false);
         colors.setBounds(x, y, 180, 50);
         this.add(colors);
 

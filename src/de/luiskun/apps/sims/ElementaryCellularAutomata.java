@@ -43,6 +43,7 @@ public class ElementaryCellularAutomata extends Application implements RangeSele
 
         JLabel ruleInfo = new JLabel("Current Rule");
         ruleInfo.setBounds(5, 5, 150, 25);
+        ruleInfo.setForeground(Color.WHITE);
         this.add(ruleInfo);
 
         ruleSpinner = new JSpinner();
@@ -89,6 +90,7 @@ public class ElementaryCellularAutomata extends Application implements RangeSele
 
         sizeInfo = new JLabel("Dot Size");
         sizeInfo.setBounds(x, y, 150, 15);
+        sizeInfo.setForeground(Color.WHITE);
         this.add(sizeInfo);
 
         y += 15;
@@ -99,6 +101,7 @@ public class ElementaryCellularAutomata extends Application implements RangeSele
         dotSizeSlider.setMajorTickSpacing(2);
         dotSizeSlider.setPaintLabels(true);
         dotSizeSlider.setPaintTicks(true);
+        dotSizeSlider.setForeground(Color.WHITE);
         this.add(dotSizeSlider);
     }
 

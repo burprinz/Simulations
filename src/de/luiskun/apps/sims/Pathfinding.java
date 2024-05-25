@@ -79,7 +79,7 @@ public class Pathfinding extends Application implements RangeSelection {
 
         y += 30;
 
-        String[] palletes = new String[] {"Greedy", "A*"};
+        String[] palletes = new String[] {"Greedy"};
         search = new JComboBox(palletes);
         search.setBounds(x, y, 180, 30);
         this.add(search);

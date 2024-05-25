@@ -154,4 +154,28 @@ public class FileHandler {
         return null;
     }
 
+    public static BufferedImage[] loadRow(String path, int size, int w, int imgw, int imgh) {
+        BufferedImage img = SetupImage(path, imgw, imgh);
+        BufferedImage[] imgs = new BufferedImage[w];
+        for (int i = 0; i < w; i++) {
+            imgs[i] = ScaleImage(cropImage(img, i*16, 0, 16, 16), size, size);
+        }
+        return imgs;
+    }
+
+
+
+    private static BufferedImage cropImage(BufferedImage sheet, int startX, int startY, int w, int h) {
+        BufferedImage img = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+
+        for (int y = startY; y < startY+h; y++) {
+            for (int x = startX; x < startX+w; x++) {
+                img.setRGB(x-startX, y-startY, sheet.getRGB(x, y));
+            }
+        }
+
+        return img;
+    }
+
+
 }
