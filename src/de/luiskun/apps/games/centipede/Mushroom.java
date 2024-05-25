@@ -19,9 +19,9 @@ public class Mushroom implements Updatable {
 
     public int state = 0;
 
-    public Mushroom(int type) {
+    public Mushroom(int type, Vektor pos) {
         this.type = type;
-        pos = new Vektor();
+        this.pos = pos;
         imgs = new BufferedImage[2][3];
         imgs[0] = FileHandler.loadRow("res/games/centipede/greenmushroom.png", Centipede.cellS, 3, 48, 16);
         imgs[1] = FileHandler.loadRow("res/games/centipede/purplemushroom.png", Centipede.cellS, 3, 48, 16);
@@ -35,6 +35,6 @@ public class Mushroom implements Updatable {
 
     @Override
     public void draw(Graphics2D g2) {
-        g2.drawImage(imgs[type][state], pos.xAsInt(), pos.yAsInt(), null);
+        g2.drawImage(imgs[type][state], pos.xAsInt()*Centipede.cellS, pos.yAsInt()*Centipede.cellS, null);
     }
 }

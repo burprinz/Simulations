@@ -1,5 +1,6 @@
 package de.luiskun.apps.games.centipede;
 
+import de.luiskun.apps.games.Game;
 import de.luiskun.tools.Geometry;
 import de.luiskun.tools.Vektor;
 import de.luiskun.ui.uiparts.Updatable;
@@ -8,6 +9,7 @@ import java.awt.*;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class CentipedeGame {
 
@@ -15,22 +17,33 @@ public class CentipedeGame {
     int fireSpeedPos = fireSpeed;
 
     Player p;
-    Mushroom m;
+    List<Enemy> enemies;
     public boolean firing;
 
     List<Projectile> projectiles;
-    List<Mushroom> mushrooms;
+    Mushroom[][] mushroomGrid;
 
     public CentipedeGame() {
         p = new Player();
+        enemies = new ArrayList<>();
+        enemies.add(new Enemy(this));
+
+        mushroomGrid = new Mushroom[Centipede.gridS][Centipede.gridS];
+
+        for (int i = 0; i < 40; i++) {
+            spawnRandomMushroom();
+        }
+
+        mushroomGrid[4][1] = new Mushroom(Mushroom.RED, new Vektor(4,1));
+        mushroomGrid[1][2] = new Mushroom(Mushroom.RED, new Vektor(1,2));
+
 
         projectiles = new ArrayList<>();
-        mushrooms = new ArrayList<>();
-        mushrooms.add(new Mushroom(Mushroom.RED));
     }
 
     public void update(Point mousePos) {
         p.update(mousePos);
+        for (Enemy e : enemies) e.update();
         updateFire();
         updateCollision();
     }
@@ -40,7 +53,9 @@ public class CentipedeGame {
             fireSpeedPos++;
             if (fireSpeedPos > fireSpeed) {
                 fireSpeedPos = 0;
-                projectiles.add(new Projectile(p.pos));
+                Vektor startPos = new Vektor(p.pos);
+                startPos.add(new Vektor(Centipede.cellS/2, 0));
+                projectiles.add(new Projectile(startPos));
             }
         } else {
             fireSpeedPos = fireSpeed;
@@ -58,30 +73,77 @@ public class CentipedeGame {
     private void updateCollision() {
         for (int pr = 0; pr < projectiles.size(); pr++) {
             Projectile p = projectiles.get(pr);
-            for (int mu = 0; mu < mushrooms.size(); mu++) {
-                Mushroom m = mushrooms.get(mu);
-                if (Geometry.rectangleCollision(p.pos.xAsInt(), p.pos.yAsInt(), p.size.xAsInt(), p.size.yAsInt(),
-                        m.pos.xAsInt(), m.pos.yAsInt(), Centipede.cellS, Centipede.cellS)) {
-                    projectiles.remove(pr);
-                    m.state++;
-                    if (m.state > 2) {
-                        mushrooms.remove(mu);
-                    }
-                    break;
+
+            boolean shot = false;
+
+            Vektor gridPos = new Vektor(p.pos);
+            // Spitze vom Projektil
+            gridPos.sub(new Vektor(0, p.size.yAsInt()/2));
+            // Auf Raster bringen
+            gridPos.divide(Centipede.cellS);
+
+            if (mushroomGrid[gridPos.xAsInt()][gridPos.yAsInt()] != null) {
+                projectiles.remove(pr);
+                mushroomGrid[gridPos.xAsInt()][gridPos.yAsInt()].state++;
+                if (mushroomGrid[gridPos.xAsInt()][gridPos.yAsInt()].state > 2) {
+                    mushroomGrid[gridPos.xAsInt()][gridPos.yAsInt()] = null;
                 }
+                shot = true;
+                continue;
+            }
+
+            if (!shot) {
+                for (int i = 0; i < enemies.size(); i++) {
+                    Enemy e = enemies.get(i);
+                    for (int ii = 0; ii < e.body.size(); ii++) {
+                        Vektor v = e.body.get(ii);
+                        Vektor sGrid = new Vektor(v);
+                        sGrid.divide(Centipede.cellS);
+                        if (Vektor.isSameInt(sGrid, gridPos)) {
+                            Enemy newE = enemies.get(i).split(ii);
+                            mushroomGrid[gridPos.xAsInt()][gridPos.yAsInt()] = new Mushroom(Mushroom.RED, gridPos);
+                            enemies.add(newE);
+                            if (pr < projectiles.size()) {
+                                projectiles.remove(pr);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private void spawnRandomMushroom() {
+        Random r = new Random();
+        boolean placed = false;
+        int x, y;
+        while(!placed) {
+            x = r.nextInt(Centipede.gridS);
+            y = 1 + r.nextInt(Centipede.gridS-2);
+            if (mushroomGrid[x][y] == null) {
+                mushroomGrid[x][y] = new Mushroom(Mushroom.RED, new Vektor(x, y));
+                placed = true;
             }
         }
     }
 
     public void draw(Graphics2D g2) {
         p.draw(g2);
+        for (Enemy e : enemies) e.draw(g2);
 
-        for (Mushroom m : mushrooms) {
-            m.draw(g2);
+
+        for (int y = 0; y < Centipede.gridS; y++) {
+            for (int x = 0; x < Centipede.gridS; x++) {
+                if (mushroomGrid[x][y] != null) mushroomGrid[x][y].draw(g2);
+            }
         }
 
         for (Projectile p : projectiles) {
             p.draw(g2);
         }
+
+
+        g2.setColor(Color.WHITE);
+        g2.drawLine(Game.HEIGHT, 0, Game.HEIGHT, Game.HEIGHT);
     }
 }

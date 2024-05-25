@@ -12,6 +12,7 @@ import java.io.File;
 public class Player {
 
     private static final int heightBorder = Game.HEIGHT/2;
+    private static final int widthBorder = Game.HEIGHT;
     BufferedImage img;
 
     public Vektor pos;
@@ -29,6 +30,10 @@ public class Player {
 
         if (pos.yAsInt() < heightBorder) {
             pos.y = heightBorder;
+        }
+
+        if (pos.xAsInt() + Centipede.cellS > widthBorder) {
+            pos.x = widthBorder-Centipede.cellS;
         }
     }
 
