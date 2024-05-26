@@ -30,12 +30,9 @@ public class CentipedeGame {
 
         mushroomGrid = new Mushroom[Centipede.gridS][Centipede.gridS];
 
-        for (int i = 0; i < 40; i++) {
+        for (int i = 0; i < 25; i++) {
             spawnRandomMushroom();
         }
-
-        mushroomGrid[4][1] = new Mushroom(Mushroom.RED, new Vektor(4,1));
-        mushroomGrid[1][2] = new Mushroom(Mushroom.RED, new Vektor(1,2));
 
 
         projectiles = new ArrayList<>();
@@ -119,9 +116,9 @@ public class CentipedeGame {
         int x, y;
         while(!placed) {
             x = r.nextInt(Centipede.gridS);
-            y = 1 + r.nextInt(Centipede.gridS-2);
+            y = 1 + r.nextInt(Centipede.gridS-5);
             if (mushroomGrid[x][y] == null) {
-                mushroomGrid[x][y] = new Mushroom(Mushroom.RED, new Vektor(x, y));
+                mushroomGrid[x][y] = new Mushroom(Mushroom.PURPLE, new Vektor(x, y));
                 placed = true;
             }
         }
