@@ -12,9 +12,12 @@ public class PointVisualizer implements Updatable {
     Vektor pos;
     int anistate = 0;
 
-    public PointVisualizer(Vektor pos, String text) {
+    Color showColor;
+
+    public PointVisualizer(Vektor pos, String text, Color c) {
         s = text;
         this.pos = pos;
+        showColor = c;
     }
 
     @Override
@@ -25,6 +28,7 @@ public class PointVisualizer implements Updatable {
 
     @Override
     public void draw(Graphics2D g2) {
+        g2.setColor(showColor);
         g2.drawString(s, pos.xAsInt(), pos.yAsInt());
     }
 }

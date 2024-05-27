@@ -13,15 +13,17 @@ public class Enemy implements Updatable {
 
     List<Vektor> body;
     List<Vektor> directions;
-    int speed = 3;
+    float speed = 2.5f;
     CentipedeGame g;
 
-    public Enemy(CentipedeGame g) {
+    public Enemy(CentipedeGame g, int len, float speed) {
+        this.speed = speed;
         this.g = g;
         body = new ArrayList<>();
         directions = new ArrayList<>();
-        for (int i = 0; i < 12; i++) {
-            body.add(new Vektor(20 + i*Centipede.cellS, 0));
+        for (int i = 0; i < len; i++) {
+            //body.add(new Vektor(20 + i*Centipede.cellS, 0));
+            body.add(new Vektor(Game.HEIGHT/2, -(i+1)*Centipede.cellS));
             directions.add(new Vektor(-speed, 0));
         }
 
@@ -36,60 +38,72 @@ public class Enemy implements Updatable {
     @Override
     public void update() {
         for (int i = 0; i < body.size(); i++) {
-            body.get(i).add(directions.get(i));
 
-            if (body.get(i).xAsInt() < 0) {
-                body.set(i, new Vektor(0, body.get(i).yAsInt() + 5));
-
-                if (body.get(i).yAsInt() % Centipede.cellS == 0) {
-                    // Halben schritt mitte
-                    directions.get(i).mult(-1);
-                }
-            }
-            if (body.get(i).xAsInt() + Centipede.cellS > Game.HEIGHT) {
-                body.set(i, new Vektor(Game.HEIGHT - Centipede.cellS, body.get(i).yAsInt() + 5));
-                if (body.get(i).yAsInt() % Centipede.cellS == 0) {
-                    // Halben schritt mitte
-                    directions.get(i).mult(-1);
-                }
-            }
-
-            Vektor gridPos = new Vektor(body.get(i));
-            gridPos.add(new Vektor(15, 0));
-            gridPos.divide(Centipede.cellS);
-
-            if (directions.get(i).xAsInt() < 0) {
-                if (gridPos.xAsInt() - 1 >= 0) {
-                    if (g.mushroomGrid[gridPos.xAsInt()-1][gridPos.yAsInt()] != null) {
-                        // Pilz links
-                        if (body.get(i).xAsInt() < gridPos.xAsInt()*Centipede.cellS) {
-                            body.set(i, new Vektor(gridPos.xAsInt()*Centipede.cellS, body.get(i).yAsInt() + 5));
-                            if (body.get(i).yAsInt() % Centipede.cellS == 0) {
-                                // Halben schritt mitte
-                                directions.get(i).mult(-1);
-                            }
-                        }
-                    }
-                }
+            if (body.get(i).yAsInt() < 0) {
+                body.get(i).add(new Vektor(0, speed));
             } else {
-                if (gridPos.xAsInt() + 1 < Centipede.gridS) {
-                    if (g.mushroomGrid[gridPos.xAsInt()+1][gridPos.yAsInt()] != null) {
-                        // Pilz rechts
-                        if (body.get(i).xAsInt() + Centipede.cellS > gridPos.xAsInt()*Centipede.cellS) {
-                            body.set(i, new Vektor(gridPos.xAsInt()*Centipede.cellS, body.get(i).yAsInt() + 5));
-                            if (body.get(i).yAsInt() % Centipede.cellS == 0) {
-                                // Halben schritt mitte
-                                directions.get(i).mult(-1);
-                            }
+                body.get(i).add(directions.get(i));
+
+                updateWallCollision(i);
+
+                Vektor gridPos = new Vektor(body.get(i));
+                gridPos.add(new Vektor(15, 0));
+                gridPos.divide(Centipede.cellS);
+
+                if (gridPos.yAsInt() < Centipede.gridS) {
+                    updateMushroomCollision(i, gridPos);
+                } else {
+                    g.gameOver();
+                }
+            }
+        }
+    }
+
+    private void updateWallCollision(int i) {
+        if (body.get(i).xAsInt() < 0) {
+            body.set(i, new Vektor(0, body.get(i).yAsInt() + 5));
+
+            if (body.get(i).yAsInt() % Centipede.cellS == 0) {
+                // Halben schritt mitte
+                directions.get(i).mult(-1);
+            }
+        }
+        if (body.get(i).xAsInt() + Centipede.cellS > Game.HEIGHT) {
+            body.set(i, new Vektor(Game.HEIGHT - Centipede.cellS, body.get(i).yAsInt() + 5));
+            if (body.get(i).yAsInt() % Centipede.cellS == 0) {
+                // Halben schritt mitte
+                directions.get(i).mult(-1);
+            }
+        }
+    }
+
+    private void updateMushroomCollision(int i, Vektor gridPos) {
+        if (directions.get(i).xAsInt() < 0) {
+            if (gridPos.xAsInt() - 1 >= 0) {
+                if (g.mushroomGrid[gridPos.xAsInt()-1][gridPos.yAsInt()] != null) {
+                    // Pilz links
+                    if (body.get(i).xAsInt() < gridPos.xAsInt()*Centipede.cellS) {
+                        body.set(i, new Vektor(gridPos.xAsInt()*Centipede.cellS, body.get(i).yAsInt() + 5));
+                        if (body.get(i).yAsInt() % Centipede.cellS == 0) {
+                            // Halben schritt mitte
+                            directions.get(i).mult(-1);
                         }
                     }
                 }
             }
-
-
-
-
-
+        } else {
+            if (gridPos.xAsInt() + 1 < Centipede.gridS) {
+                if (g.mushroomGrid[gridPos.xAsInt()+1][gridPos.yAsInt()] != null) {
+                    // Pilz rechts
+                    if (body.get(i).xAsInt() + Centipede.cellS > gridPos.xAsInt()*Centipede.cellS) {
+                        body.set(i, new Vektor(gridPos.xAsInt()*Centipede.cellS, body.get(i).yAsInt() + 5));
+                        if (body.get(i).yAsInt() % Centipede.cellS == 0) {
+                            // Halben schritt mitte
+                            directions.get(i).mult(-1);
+                        }
+                    }
+                }
+            }
         }
     }
 
