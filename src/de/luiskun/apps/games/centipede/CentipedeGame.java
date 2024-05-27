@@ -1,12 +1,15 @@
 package de.luiskun.apps.games.centipede;
 
 import de.luiskun.apps.games.Game;
+import de.luiskun.tools.FileHandler;
 import de.luiskun.tools.Geometry;
 import de.luiskun.tools.Vektor;
 import de.luiskun.ui.uiparts.Updatable;
 
 import java.awt.*;
 import java.awt.event.MouseListener;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -21,12 +24,18 @@ public class CentipedeGame {
     public boolean firing;
 
     List<Projectile> projectiles;
+    List<PointVisualizer> shownPoints;
     Mushroom[][] mushroomGrid;
+    int score = 0;
+    Font pixelfont;
 
     public CentipedeGame() {
         p = new Player();
         enemies = new ArrayList<>();
         enemies.add(new Enemy(this));
+
+        pixelfont = FileHandler.getPixelFont();
+        shownPoints = new ArrayList<>();
 
         mushroomGrid = new Mushroom[Centipede.gridS][Centipede.gridS];
 
@@ -43,6 +52,11 @@ public class CentipedeGame {
         for (Enemy e : enemies) e.update();
         updateFire();
         updateCollision();
+
+        for (int i = 0; i < shownPoints.size(); i++) {
+            shownPoints.get(i).update();
+            if (shownPoints.get(i).anistate > 20) shownPoints.remove(i);
+        }
     }
 
     private void updateFire() {
@@ -84,6 +98,9 @@ public class CentipedeGame {
                 mushroomGrid[gridPos.xAsInt()][gridPos.yAsInt()].state++;
                 if (mushroomGrid[gridPos.xAsInt()][gridPos.yAsInt()].state > 2) {
                     mushroomGrid[gridPos.xAsInt()][gridPos.yAsInt()] = null;
+                    gridPos.mult(Centipede.cellS);
+                    shownPoints.add(new PointVisualizer(gridPos, "+5P"));
+                    score += 5;
                 }
                 shot = true;
                 continue;
@@ -98,6 +115,8 @@ public class CentipedeGame {
                         sGrid.divide(Centipede.cellS);
                         if (Vektor.isSameInt(sGrid, gridPos)) {
                             Enemy newE = enemies.get(i).split(ii);
+                            shownPoints.add(new PointVisualizer(v, "+2P"));
+                            score += 2;
                             mushroomGrid[gridPos.xAsInt()][gridPos.yAsInt()] = new Mushroom(Mushroom.RED, gridPos);
                             enemies.add(newE);
                             if (pr < projectiles.size()) {
@@ -118,7 +137,7 @@ public class CentipedeGame {
             x = r.nextInt(Centipede.gridS);
             y = 1 + r.nextInt(Centipede.gridS-5);
             if (mushroomGrid[x][y] == null) {
-                mushroomGrid[x][y] = new Mushroom(Mushroom.PURPLE, new Vektor(x, y));
+                mushroomGrid[x][y] = new Mushroom(Mushroom.RED, new Vektor(x, y));
                 placed = true;
             }
         }
@@ -142,5 +161,16 @@ public class CentipedeGame {
 
         g2.setColor(Color.WHITE);
         g2.drawLine(Game.HEIGHT, 0, Game.HEIGHT, Game.HEIGHT);
+
+        g2.setFont(pixelfont.deriveFont(Font.BOLD, 30));
+
+        for (PointVisualizer pv : shownPoints) {
+            pv.draw(g2);
+        }
+
+        int x = Game.HEIGHT + 10;
+        int y = 30;
+
+        g2.drawString("Points: " + score, x, y);
     }
 }

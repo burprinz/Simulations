@@ -177,5 +177,12 @@ public class FileHandler {
         return img;
     }
 
+    public static final Font getPixelFont() {
+        try {
+            return Font.createFont(Font.TRUETYPE_FONT, new File("res/fonts/Pixelon-OGALo.ttf")).deriveFont(12f);
+        } catch (FontFormatException | IOException e) {
+            return null;
+        }
+    }
 
 }
