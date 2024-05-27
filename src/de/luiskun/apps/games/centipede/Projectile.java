@@ -10,10 +10,12 @@ public class Projectile implements Updatable {
     Vektor velocity;
     public Vektor pos;
     public Vektor size = new Vektor(4, 12);
+    public boolean ult;
 
-    public Projectile(Vektor pos) {
+    public Projectile(Vektor pos, boolean ult) {
         this.pos = pos;
         velocity = new Vektor(0, -10);
+        this.ult = ult;
     }
 
     @Override

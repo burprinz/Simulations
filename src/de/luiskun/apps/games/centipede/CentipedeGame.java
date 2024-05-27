@@ -18,7 +18,7 @@ public class CentipedeGame {
 
     final int fireSpeed = 10;
 
-    final int ultLimit = 15;
+    int ultLimit = 15;
 
     int fireSpeedPos = fireSpeed;
 
@@ -64,7 +64,7 @@ public class CentipedeGame {
                 fireSpeedPos = 0;
                 Vektor startPos = new Vektor(p.pos);
                 startPos.add(new Vektor(Centipede.cellS/2, 0));
-                projectiles.add(new Projectile(startPos));
+                projectiles.add(new Projectile(startPos, false));
             }
         } else {
             fireSpeedPos = fireSpeed;
@@ -99,6 +99,9 @@ public class CentipedeGame {
                     gridPos.mult(Centipede.cellS);
                     shownPoints.add(new PointVisualizer(gridPos, "+5P", Color.RED));
                     score += 5;
+                    if (!p.ult) {
+                        ultbar++;
+                    }
                     ce.playScoreSound();
                 }
                 shot = true;
@@ -116,6 +119,9 @@ public class CentipedeGame {
                             Enemy newE = enemies.get(i).split(ii);
                             shownPoints.add(new PointVisualizer(v, "+2P", Color.BLUE));
                             score += 2;
+                            if (!p.ult) {
+                                ultbar++;
+                            }
                             mushroomGrid[gridPos.xAsInt()][gridPos.yAsInt()] = new Mushroom(Mushroom.RED, gridPos);
                             enemies.add(newE);
                             ce.playScoreSound();
@@ -227,13 +233,26 @@ public class CentipedeGame {
 
         y += 40;
         g2.drawString("Stage " + (stage+1), x, y);
+
+        y += 50;
+        g2.drawString("ULT: " + ultbar + "/" + ultLimit, x, y);
+
+        y += 20;
+        g2.setColor(Color.DARK_GRAY);
+        g2.fillRect(x, y, 180, 40);
+
+        g2.setColor(Color.GREEN);
+        float w = 180 * ((float)ultbar / (float) ultLimit);
+        if (w > 180) w = 180;
+        g2.fillRect(x, y, (int) w, 40);
     }
 
     public void useUlt() {
         if (ultbar > ultLimit) {
+            ultLimit += 3;
             for (int i = 0; i < Centipede.gridS; i++) {
                 for (int am = 0; am < 5; am++) {
-                    projectiles.add(new Projectile(new Vektor(i*Centipede.cellS + Centipede.cellS/2, Game.HEIGHT)));
+                    projectiles.add(new Projectile(new Vektor(i*Centipede.cellS + Centipede.cellS/2, Game.HEIGHT), true));
                 }
             }
             ultbar -= ultLimit;
