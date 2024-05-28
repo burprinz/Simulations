@@ -6,6 +6,7 @@ import de.luiskun.json.Farbpalette;
 import de.luiskun.json.GOL_Preset;
 import de.luiskun.json.IntegerPunkt;
 
+import java.util.Arrays;
 import java.util.List;
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -158,8 +159,8 @@ public class FileHandler {
 
     public static Vektor[] readGOLPreset(boolean isCustom, String name) {
         String path = "res/sims/gameoflife/";
-        path+=isCustom?"custom":"presets";
-        path += "/" + name + ".txt";
+        path+=isCustom?"custom":"pre";
+        path += "/" + name;
 
         try {
             String json = new String(Files.readAllBytes(Paths.get(path)));
@@ -177,6 +178,19 @@ public class FileHandler {
         return null;
     }
 
+    public static void saveGOLPreset(List<Vektor> v, String name) {
+        Vektor[] vs = new Vektor[v.size()];
+        for (int i = 0; i < v.size(); i++) vs[i] = new Vektor(v.get(i).xAsInt(), v.get(i).yAsInt());
+
+        GOL_Preset pre = new GOL_Preset(vs);
+        ObjectMapper om = new ObjectMapper();
+        try {
+           om.writeValue(new File("res/sims/gameoflife/custom/" + name + ".txt"), pre);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public static BufferedImage[] loadRow(String path, int size, int w, int imgw, int imgh) {
         BufferedImage img = SetupImage(path, imgw, imgh);
         BufferedImage[] imgs = new BufferedImage[w];
@@ -184,6 +198,20 @@ public class FileHandler {
             imgs[i] = ScaleImage(cropImage(img, i*16, 0, 16, 16), size, size);
         }
         return imgs;
+    }
+
+    public static String[] readGOLNAMES(String folder) {
+
+        File[] names = new File("res/sims/gameoflife/" + folder).listFiles();
+
+        String[] res = new String[names.length];
+
+        for (int i = 0; i < names.length; i++) {
+            res[i] = names[i].getName();
+        }
+
+        return res;
+
     }
 
 

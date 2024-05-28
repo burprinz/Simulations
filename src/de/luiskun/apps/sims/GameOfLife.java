@@ -2,9 +2,13 @@ package de.luiskun.apps.sims;
 
 import de.luiskun.apps.Application;
 import de.luiskun.apps.sims.classes.GOL_Objects;
+import de.luiskun.tools.FileHandler;
 import de.luiskun.tools.Vektor;
 import de.luiskun.ui.uiparts.RangePicker;
 import de.luiskun.ui.uiparts.RangeSelection;
+
+import java.io.File;
+import java.util.List;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,6 +16,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.ArrayList;
 
 public class GameOfLife extends Application implements MouseListener, ActionListener, RangeSelection {
 
@@ -27,16 +32,20 @@ public class GameOfLife extends Application implements MouseListener, ActionList
     boolean[][] createGrid;
 
     JCheckBox createMode;
-    JButton saveCreation;
+    JButton saveCreation, resetField;
     RangePicker speedPicker;
+    JTextField nameField;
+    JComboBox customSelection, prebuiltSelection;
+    JRadioButton customSel, preSel;
+    ButtonGroup typeSel;
 
     boolean creating;
     boolean leftClicking, rightClicking;
 
+    Vektor[] currentStarterGrid;
+
     public GameOfLife() {
         this.addMouseListener(this);
-
-        resetGrid();
 
         int x = HEIGHT + 10;
         int y = 10;
@@ -60,15 +69,74 @@ public class GameOfLife extends Application implements MouseListener, ActionList
         saveCreation.addActionListener(this);
         saveCreation.setActionCommand("cr-save");
         this.add(saveCreation);
+
+        y += 30;
+        nameField = new JTextField();
+        nameField.setBounds(x, y, 180, 25);
+        this.add(nameField);
+
+        y += 30;
+        JLabel presetInfo = new JLabel("<html><u>Presets</u></html>");
+        presetInfo.setBounds(x,y,180,15);
+        presetInfo.setForeground(Color.WHITE);
+        this.add(presetInfo);
+        {
+            y += 20;
+            preSel = new JRadioButton("Prebuilt");
+            preSel.setBounds(x,y,180,15);
+            preSel.setSelected(true);
+            this.add(preSel);
+
+            y += 20;
+            prebuiltSelection = new JComboBox(FileHandler.readGOLNAMES("pre"));
+            prebuiltSelection.setBounds(x,y,180, 25);
+            this.add(prebuiltSelection);
+
+            y += 30;
+            customSel = new JRadioButton("Custom");
+            customSel.setBounds(x,y,180,15);
+            this.add(customSel);
+
+            typeSel = new ButtonGroup();
+            typeSel.add(preSel);
+            typeSel.add(customSel);
+
+            y += 20;
+            customSelection = new JComboBox(FileHandler.readGOLNAMES("custom"));
+            customSelection.setBounds(x,y,180, 25);
+            this.add(customSelection);
+
+            y += 30;
+            resetField = new JButton("Reset");
+            resetField.setBounds(x, y, 180, 25);
+            resetField.setActionCommand("reset");
+            resetField.addActionListener(this);
+            this.add(resetField);
+        }
+
+        resetGrid();
+
     }
 
     private void resetGrid() {
         cellSize = HEIGHT / gridSize;
         createCellSize = HEIGHT / createSize;
         currentGen = new boolean[gridSize][gridSize];
-        createGrid = new boolean[gridSize][gridSize];
+        createGrid = new boolean[createSize][createSize];
 
-        currentGen = GOL_Objects.addCribbageToGrid(currentGen, new Vektor(gridSize/2, gridSize/2));
+        if (preSel.isSelected()) {
+            currentStarterGrid = FileHandler.readGOLPreset(false, prebuiltSelection.getSelectedItem().toString());
+        } else {
+            currentStarterGrid = FileHandler.readGOLPreset(true, customSelection.getSelectedItem().toString());
+        }
+
+        if (currentStarterGrid != null) {
+
+            for (Vektor v : currentStarterGrid) {
+                currentGen[(v.xAsInt() + gridSize + gridSize/2) % gridSize][(v.yAsInt() + gridSize + gridSize/2) % gridSize] = true;
+            }
+
+        }
     }
 
     @Override
@@ -200,11 +268,32 @@ public class GameOfLife extends Application implements MouseListener, ActionList
         }
     }
 
+    private void saveCreation() {
+        List<Vektor> vs = new ArrayList();
+        Vektor midPoint = new Vektor(createSize/2, createSize/2);
+
+        for (int y = 0; y < createSize; y++) {
+            for (int x = 0; x < createSize; x++) {
+                if (createGrid[x][y]) {
+                    Vektor v = new Vektor(x, y);
+                    v.sub(midPoint);
+                    vs.add(v);
+                }
+            }
+        }
+
+        FileHandler.saveGOLPreset(vs, nameField.getText());
+
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         switch (e.getActionCommand()) {
             case "cr-save":
-                printCreation();
+                saveCreation();
+                break;
+            case "reset":
+                resetGrid();
                 break;
         }
     }
