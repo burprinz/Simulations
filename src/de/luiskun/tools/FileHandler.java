@@ -3,6 +3,8 @@ package de.luiskun.tools;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.luiskun.json.Farbe;
 import de.luiskun.json.Farbpalette;
+import de.luiskun.json.GOL_Preset;
+import de.luiskun.json.IntegerPunkt;
 
 import java.util.List;
 import javax.imageio.ImageIO;
@@ -154,6 +156,27 @@ public class FileHandler {
         return null;
     }
 
+    public static Vektor[] readGOLPreset(boolean isCustom, String name) {
+        String path = "res/sims/gameoflife/";
+        path+=isCustom?"custom":"presets";
+        path += "/" + name + ".txt";
+
+        try {
+            String json = new String(Files.readAllBytes(Paths.get(path)));
+            ObjectMapper om = new ObjectMapper();
+            GOL_Preset pre = om.readValue(json, GOL_Preset.class);
+            List<IntegerPunkt> pts = pre.getPoints();
+            Vektor[] result = new Vektor[pts.size()];
+            for (int i = 0; i < pts.size(); i++) {
+                result[i] = new Vektor(pts.get(i).getX(), pts.get(i).getY());
+            }
+            return result;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public static BufferedImage[] loadRow(String path, int size, int w, int imgw, int imgh) {
         BufferedImage img = SetupImage(path, imgw, imgh);
         BufferedImage[] imgs = new BufferedImage[w];
@@ -162,7 +185,6 @@ public class FileHandler {
         }
         return imgs;
     }
-
 
 
     private static BufferedImage cropImage(BufferedImage sheet, int startX, int startY, int w, int h) {
@@ -177,7 +199,9 @@ public class FileHandler {
         return img;
     }
 
-    public static final Font getPixelFont() {
+
+
+    public static Font getPixelFont() {
         try {
             return Font.createFont(Font.TRUETYPE_FONT, new File("res/fonts/Pixelon-OGALo.ttf")).deriveFont(12f);
         } catch (FontFormatException | IOException e) {
