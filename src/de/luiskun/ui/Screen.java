@@ -70,7 +70,7 @@ public class Screen extends JPanel implements Runnable {
 
         allGames = new ArrayList<>();
         allGames.add("snake");
-        allGames.add("emptyslot");
+        allGames.add("centipede");
         allGames.add("emptyslot");
         allGames.add("emptyslot");
 
@@ -133,6 +133,8 @@ public class Screen extends JPanel implements Runnable {
 
         resetButtons(currentPage);
     }
+
+    boolean freeze = false;
 
     private void resetButtons(int page) {
 
@@ -436,12 +438,14 @@ public class Screen extends JPanel implements Runnable {
                     case "barnsleyfern":
                         return new BarnsleyFern();
                     default:
-                        return new WeightedVoronoi();
+                        return new GameOfLife();
                 }
             } else if (mode == GAME) {
                 switch (name) {
                     case "snake":
                         return new Snake();
+                    case "centipede":
+                        return new Centipede();
                     default:
                         return new Centipede();
                 }
