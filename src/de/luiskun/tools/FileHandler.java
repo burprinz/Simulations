@@ -214,6 +214,19 @@ public class FileHandler {
 
     }
 
+    public static boolean isGOLNameUsed(String name) {
+        File[] files = new File("res/sims/gameoflife/custom").listFiles();
+
+        for (File f : files) {
+            String filename = f.getName();
+            filename = filename.substring(0, filename.length()-4);
+            if (name.equals(filename)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     private static BufferedImage cropImage(BufferedImage sheet, int startX, int startY, int w, int h) {
         BufferedImage img = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
