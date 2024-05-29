@@ -65,7 +65,7 @@ public class Screen extends JPanel implements Runnable {
         allApplications.add("sandpiles");
         allApplications.add("boids");
         allApplications.add("barnsleyfern");
-        allApplications.add("emptyslot");
+        allApplications.add("gameoflife");
         allApplications.add("emptyslot");
 
         allGames = new ArrayList<>();
@@ -437,6 +437,8 @@ public class Screen extends JPanel implements Runnable {
                         return new Boids();
                     case "barnsleyfern":
                         return new BarnsleyFern();
+                    case "gameoflife":
+                        return new GameOfLife();
                     default:
                         return new GameOfLife();
                 }
