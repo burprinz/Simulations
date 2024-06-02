@@ -440,7 +440,7 @@ public class Screen extends JPanel implements Runnable {
                     case "gameoflife":
                         return new GameOfLife();
                     default:
-                        return new GameOfLife();
+                        return new BouncingCircle();
                 }
             } else if (mode == GAME) {
                 switch (name) {

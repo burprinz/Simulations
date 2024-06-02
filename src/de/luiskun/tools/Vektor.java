@@ -84,7 +84,7 @@ public class Vektor {
 
         // Erst Koordinaten von unten nach oben setzen
         double y = height - v.y;
-        y += (height/2);
+        y -= (height/2);
 
         return new Vektor(x, y);
     }
