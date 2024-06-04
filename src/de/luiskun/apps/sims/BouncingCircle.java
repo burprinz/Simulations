@@ -1,11 +1,13 @@
 package de.luiskun.apps.sims;
 
 import de.luiskun.apps.Application;
+import de.luiskun.tools.Songs;
 import de.luiskun.tools.Vektor;
 import de.luiskun.ui.uiparts.ActionFunction;
 import de.luiskun.ui.uiparts.RangePicker;
 import de.luiskun.ui.uiparts.RangeSelection;
 
+import javax.sound.midi.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -42,6 +44,8 @@ public class BouncingCircle extends Application implements ActionListener, Range
     public BouncingCircle() {
         collisionPoints = new ArrayList<>();
         commands = new ConcurrentHashMap<>();
+
+        startSound();
 
         int w = WIDTH-HEIGHT-20;
         int x = HEIGHT + 10;
@@ -163,6 +167,8 @@ public class BouncingCircle extends Application implements ActionListener, Range
             double distance = Math.sqrt(Math.pow(smallPos.x, 2) + Math.pow(smallPos.y, 2));
 
             if(distance + smallRadius > bigRadius) {
+
+                playing = true;
 
                 Vektor collisionPos = new Vektor(middle);
                 collisionPos.add(smallPos);
@@ -294,4 +300,49 @@ public class BouncingCircle extends Application implements ActionListener, Range
     private ActionFunction resetSim = () -> {
         resetGame();
     };
+
+    int pos;
+
+    private void playSound() {
+        try{
+            Synthesizer midiSynth = MidiSystem.getSynthesizer();
+            midiSynth.open();
+
+            //get and load default instrument and channel lists
+            Instrument[] instr = midiSynth.getDefaultSoundbank().getInstruments();
+            MidiChannel[] mChannels = midiSynth.getChannels();
+
+            midiSynth.loadInstrument(instr[0]);//load an instrument
+
+            if (pos > 0) {
+                mChannels[0].noteOff(Songs.BlueBird[(pos-1) % Songs.BlueBird.length]);//turn of the note
+
+            }
+
+            mChannels[0].noteOn(Songs.BlueBird[pos % Songs.BlueBird.length], 100);//On channel 0, play note number 60 with velocity 100
+
+            pos++;
+
+        } catch (MidiUnavailableException e) {
+            e.printStackTrace();
+        }
+    }
+
+    Thread sound;
+    boolean playing = false;
+    private void startSound() {
+        sound = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while(true) {
+                    if (playing) {
+                        playSound();
+                        playing = false;
+                    }
+                }
+            }
+        });
+        sound.start();
+    }
+
 }
