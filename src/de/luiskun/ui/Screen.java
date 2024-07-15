@@ -1,6 +1,7 @@
 package de.luiskun.ui;
 
 import de.luiskun.apps.Application;
+import de.luiskun.apps.ApplicationInfo;
 import de.luiskun.apps.games.centipede.Centipede;
 import de.luiskun.apps.games.snake.Snake;
 import de.luiskun.apps.sorting.*;
@@ -12,13 +13,13 @@ import de.luiskun.apps.games.spaceblaster.SpaceBlaster;
 import javax.swing.*;
 import java.awt.*;
 
-import java.util.List;
+import java.util.*;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
+import java.util.List;
 
 public class Screen extends JPanel implements Runnable {
 
@@ -39,54 +40,202 @@ public class Screen extends JPanel implements Runnable {
 
     private BufferedImage background;
 
-    List<String> allApplications;
-    List<String> allGames;
-    List<String> allSortings;
     List<JButton> buttons;
 
     int currentPage = 0;
 
     int mode = 0;
 
+    Map<String, ApplicationInfo> sims;
+    Map<String, ApplicationInfo> games;
+    Map<String, ApplicationInfo> sort;
+
     public Screen() {
         this.setPreferredSize(new Dimension(WIDTH, HEIGHT));
         this.setDoubleBuffered(true);
         this.setLayout(null);
 
-        allApplications = new ArrayList<>();
-        allApplications.add("mandelbrot");
-        allApplications.add("elemcelauto");
-        allApplications.add("sandsim");
-        allApplications.add("timestablescar");
-        allApplications.add("phyllotaxis");
-        allApplications.add("reactiondiffusion");
-        allApplications.add("firework");
-        allApplications.add("searching");
-        allApplications.add("sandpiles");
-        allApplications.add("boids");
-        allApplications.add("barnsleyfern");
-        allApplications.add("gameoflife");
-        allApplications.add("emptyslot");
+        games = new HashMap<>();
+        games.put("snake", new ApplicationInfo() {
+            @Override
+            public Application getApplication() {
+                return new Snake();
+            }
 
-        allGames = new ArrayList<>();
-        allGames.add("snake");
-        allGames.add("centipede");
-        allGames.add("emptyslot");
-        allGames.add("emptyslot");
+            @Override
+            public int getPosition() {
+                return 0;
+            }
+        });
+        games.put("centipede", new ApplicationInfo() {
+            @Override
+            public Application getApplication() {
+                return new Centipede();
+            }
 
-        allSortings = new ArrayList<>();
-        allSortings.add("selectionsort");
-        allSortings.add("bubblesort");
-        allSortings.add("mergesort");
-        allSortings.add("quicksort");
-        allSortings.add("heapsort");
-        allSortings.add("combsort");
-        allSortings.add("cyclesort");
-        allSortings.add("cocktailsort");
-        allSortings.add("pancakesort");
-        allSortings.add("gnomesort");
-        allSortings.add("stoogesort");
-        allSortings.add("oddevensort");
+            @Override
+            public int getPosition() {
+                return 1;
+            }
+        });
+
+        sims = new HashMap<>();
+        sims.put("mandelbrot", new ApplicationInfo() {
+            @Override
+            public Application getApplication() {
+                return new Mandelbrot();
+            }
+
+            @Override
+            public int getPosition() {
+                return 0;
+            }
+        });
+        sims.put("elemcelauto", new ApplicationInfo() {
+            @Override
+            public Application getApplication() {
+                return new ElementaryCellularAutomata();
+            }
+
+            @Override
+            public int getPosition() {
+                return 5;
+            }
+        });
+        sims.put("sandsim", new ApplicationInfo() {
+            @Override
+            public Application getApplication() {
+                return new FallingSand();
+            }
+
+            @Override
+            public int getPosition() {
+                return 6;
+            }
+        });
+        sims.put("timestablescar", new ApplicationInfo() {
+            @Override
+            public Application getApplication() {
+                return new TimesTablesCardioid();
+            }
+
+            @Override
+            public int getPosition() {
+                return 7;
+            }
+        });
+        sims.put("phyllotaxis", new ApplicationInfo() {
+            @Override
+            public Application getApplication() {
+                return new Phyllotaxis();
+            }
+
+            @Override
+            public int getPosition() {
+                return 8;
+            }
+        });
+        sims.put("reactiondiffusion", new ApplicationInfo() {
+            @Override
+            public Application getApplication() {
+                return new ReactionDiffusion();
+            }
+
+            @Override
+            public int getPosition() {
+                return 9;
+            }
+        });
+        sims.put("firework", new ApplicationInfo() {
+            @Override
+            public Application getApplication() {
+                return new Fireworks();
+            }
+
+            @Override
+            public int getPosition() {
+                return 1;
+            }
+        });
+        sims.put("sandpiles", new ApplicationInfo() {
+            @Override
+            public Application getApplication() {
+                return new Sandpiles();
+            }
+
+            @Override
+            public int getPosition() {
+                return 2;
+            }
+        });
+        sims.put("boids", new ApplicationInfo() {
+            @Override
+            public Application getApplication() {
+                return new Boids();
+            }
+
+            @Override
+            public int getPosition() {
+                return 3;
+            }
+        });
+        sims.put("barnsleyfern", new ApplicationInfo() {
+            @Override
+            public Application getApplication() {
+                return new BarnsleyFern();
+            }
+
+            @Override
+            public int getPosition() {
+                return 10;
+            }
+        });
+        sims.put("gameoflife", new ApplicationInfo() {
+            @Override
+            public Application getApplication() {
+                return new GameOfLife();
+            }
+
+            @Override
+            public int getPosition() {
+                return 11;
+            }
+        });
+        sims.put("bouncingcircle", new ApplicationInfo() {
+            @Override
+            public Application getApplication() {
+                return new BouncingCircle();
+            }
+
+            @Override
+            public int getPosition() {
+                return 4;
+            }
+        });
+        sims.put("searching", new ApplicationInfo() {
+            @Override
+            public Application getApplication() {
+                return new Pathfinding();
+            }
+
+            @Override
+            public int getPosition() {
+                return 12;
+            }
+        });
+        sims.put("emptyslot", new ApplicationInfo() {
+            @Override
+            public Application getApplication() {
+                return new WaterRipples();
+            }
+
+            @Override
+            public int getPosition() {
+                return 13;
+            }
+        });
+
+        initSort();
 
         background = FileHandler.SetupImage("res/previews/background.png", WIDTH, HEIGHT);
 
@@ -134,6 +283,142 @@ public class Screen extends JPanel implements Runnable {
         resetButtons(currentPage);
     }
 
+    private void initSort() {
+        sort = new HashMap<>();
+        games.put("selectionsort", new ApplicationInfo() {
+            @Override
+            public Application getApplication() {
+                return new SelectionSort();
+            }
+
+            @Override
+            public int getPosition() {
+                return 0;
+            }
+        });
+        games.put("bubblesort", new ApplicationInfo() {
+            @Override
+            public Application getApplication() {
+                return new Bubblesort();
+            }
+
+            @Override
+            public int getPosition() {
+                return 1;
+            }
+        });
+        games.put("mergesort", new ApplicationInfo() {
+            @Override
+            public Application getApplication() {
+                return new MergeSort();
+            }
+
+            @Override
+            public int getPosition() {
+                return 2;
+            }
+        });
+        games.put("quicksort", new ApplicationInfo() {
+            @Override
+            public Application getApplication() {
+                return new Quicksort();
+            }
+
+            @Override
+            public int getPosition() {
+                return 3;
+            }
+        });
+        games.put("heapsort", new ApplicationInfo() {
+            @Override
+            public Application getApplication() {
+                return new Heapsort();
+            }
+
+            @Override
+            public int getPosition() {
+                return 4;
+            }
+        });
+        games.put("combsort", new ApplicationInfo() {
+            @Override
+            public Application getApplication() {
+                return new Combsort();
+            }
+
+            @Override
+            public int getPosition() {
+                return 5;
+            }
+        });
+        games.put("cyclesort", new ApplicationInfo() {
+            @Override
+            public Application getApplication() {
+                return new Cyclesort();
+            }
+
+            @Override
+            public int getPosition() {
+                return 6;
+            }
+        });
+        games.put("cocktailsort", new ApplicationInfo() {
+            @Override
+            public Application getApplication() {
+                return new Cocktailsort();
+            }
+
+            @Override
+            public int getPosition() {
+                return 7;
+            }
+        });
+        games.put("pancakesort", new ApplicationInfo() {
+            @Override
+            public Application getApplication() {
+                return new Pancakesort();
+            }
+
+            @Override
+            public int getPosition() {
+                return 8;
+            }
+        });
+        games.put("gnomesort", new ApplicationInfo() {
+            @Override
+            public Application getApplication() {
+                return new Gnomesort();
+            }
+
+            @Override
+            public int getPosition() {
+                return 9;
+            }
+        });
+        games.put("stoogesort", new ApplicationInfo() {
+            @Override
+            public Application getApplication() {
+                return new Stoogesort();
+            }
+
+            @Override
+            public int getPosition() {
+                return 10;
+            }
+        });
+        games.put("oddevensort", new ApplicationInfo() {
+            @Override
+            public Application getApplication() {
+                return new OddEvenSort();
+            }
+
+            @Override
+            public int getPosition() {
+                return 11;
+            }
+        });
+    }
+
     boolean freeze = false;
 
     private void resetButtons(int page) {
@@ -154,41 +439,39 @@ public class Screen extends JPanel implements Runnable {
         int start = page * 9;
 
         int size;
+        String[] names = null;
 
         if (mode == SIM) {
-            size = allApplications.size();
+            size = sims.size();
+            names = sortNames(sims.values().toArray(new ApplicationInfo[0]), sims.keySet().toArray(new String[0]));
         } else if (mode == GAME) {
-            size = allGames.size();
+            //size = allGames.size();
+            size = games.size();
+            names = sortNames(games.values().toArray(new ApplicationInfo[0]), games.keySet().toArray(new String[0]));
         } else {
-            size = allSortings.size();
+            size = sort.size();
+            names = sortNames(sort.values().toArray(new ApplicationInfo[0]), sort.keySet().toArray(new String[0]));
+
+
         }
 
-        for (int i = 0; i < amountButtons; i++) {
-            // Zur sicherheit (Top-Kommentar)
-            if (i+start >= size) {
-                break;
+        if (names != null) {
+            for (int i = 0; i < 9; i++) {
+                if (i+start >= size) {
+                    break;
+                }
+
+                int x = 25 + (i%3) * 300;
+                int y = 25 + (i/3) * 217;
+
+                JButton button = new JButton(new ImageIcon("res/previews/" + names[start+i] + ".png"));
+                button.setBounds(x, y, 250, 167);
+                button.setActionCommand(names[start+i]);
+                button.addActionListener(bh);
+                buttons.add(button);
+                this.add(button);
+
             }
-
-            String name = "";
-
-            if (mode == SIM) {
-                name = allApplications.get(start + i);
-            } else if (mode == GAME) {
-                name = allGames.get(start + i);
-            } else {
-                name = allSortings.get(start + i);
-            }
-
-            int x = 25 + (i%3) * 300;
-            int y = 25 + (i/3) * 217;
-
-            JButton button = new JButton(new ImageIcon("res/previews/" + name + ".png"));
-            button.setBounds(x, y, 250, 167);
-            button.setActionCommand(name);
-            button.addActionListener(bh);
-            buttons.add(button);
-            this.add(button);
-
         }
 
         JButton gameSwitch = new JButton(new ImageIcon(FileHandler.SetupImage("res/icons/controller.png", 50, 50)));
@@ -253,11 +536,11 @@ public class Screen extends JPanel implements Runnable {
         int amApps;
 
         if (mode == SIM) {
-            amApps = allApplications.size();
+            amApps = sims.size();
         } else if (mode == GAME) {
-            amApps = allGames.size();
+            amApps = games.size();
         } else {
-            amApps = allSortings.size();
+            amApps = sort.size();
         }
 
         if (page < 0) {
@@ -277,11 +560,11 @@ public class Screen extends JPanel implements Runnable {
         int size;
 
         if (mode == SIM) {
-            size = allApplications.size();
+            size = sims.size();
         } else if (mode == GAME) {
-            size = allGames.size();
+            size = games.size();
         }else {
-            size = allSortings.size();
+            size = sort.size();
         }
 
         int count = 0;
@@ -328,17 +611,29 @@ public class Screen extends JPanel implements Runnable {
         int am;
 
         if (mode == SIM) {
-            am = allApplications.size()/9;
-            if (allApplications.size()%9>0)am++;
+            am = sims.size()/9;
+            if (sims.size()%9>0)am++;
         } else if (mode == GAME) {
-            am = allGames.size()/9;
-            if (allGames.size()%9>0)am++;
+            am = games.size()/9;
+            if (games.size()%9>0)am++;
         } else {
-            am = allSortings.size()/9;
-            if (allSortings.size()%9>0)am++;
+            am = sort.size()/9;
+            if (sort.size()%9>0)am++;
         }
 
         return am;
+    }
+
+    private String[] sortNames(ApplicationInfo[] in, String[] names) {
+        String[] out = new String[in.length];
+        for (int i = 0; i < in.length; i++) {
+            if (in[i].getPosition() < 0){
+                out[in.length-1] = names[i];
+                continue;
+            }
+            out[in[i].getPosition()] = names[i];
+        }
+        return out;
     }
 
     @Override
@@ -414,72 +709,11 @@ public class Screen extends JPanel implements Runnable {
             return null;
         }else {
             if (mode == SIM) {
-                switch (name) {
-                    case "mandelbrot":
-                        return new Mandelbrot();
-                    case "elemcelauto":
-                        return new ElementaryCellularAutomata();
-                    case "sandsim":
-                        return new FallingSand();
-                    case "timestablescar":
-                        return new TimesTablesCardioid();
-                    case "phyllotaxis":
-                        return new Phyllotaxis();
-                    case "reactiondiffusion":
-                        return new ReactionDiffusion();
-                    case "firework":
-                        return new Fireworks();
-                    case "searching":
-                        return new Pathfinding();
-                    case "sandpiles":
-                        return new Sandpiles();
-                    case "boids":
-                        return new Boids();
-                    case "barnsleyfern":
-                        return new BarnsleyFern();
-                    case "gameoflife":
-                        return new GameOfLife();
-                    default:
-                        return new BouncingCircle();
-                }
+                return sims.get(name).getApplication();
             } else if (mode == GAME) {
-                switch (name) {
-                    case "snake":
-                        return new Snake();
-                    case "centipede":
-                        return new Centipede();
-                    default:
-                        return new Centipede();
-                }
+                return games.get(name).getApplication();
             } if (mode == SORT) {
-                switch (name) {
-                    case "selectionsort":
-                        return new SelectionSort();
-                    case "bubblesort":
-                        return new Bubblesort();
-                    case "mergesort":
-                        return new MergeSort();
-                    case "quicksort":
-                        return new Quicksort();
-                    case "heapsort":
-                        return new Heapsort();
-                    case "combsort":
-                        return new Combsort();
-                    case "cyclesort":
-                        return new Cyclesort();
-                    case "cocktailsort":
-                        return new Cocktailsort();
-                    case "pancakesort":
-                        return new Pancakesort();
-                    case "gnomesort":
-                        return new Gnomesort();
-                    case "stoogesort":
-                        return new Stoogesort();
-                    case "oddevensort":
-                        return new OddEvenSort();
-                    default:
-                        return null;
-                }
+                return sort.get(name).getApplication();
             }
         }
         return null;

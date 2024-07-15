@@ -335,6 +335,7 @@ public class BouncingCircle extends Application implements ActionListener, Range
             @Override
             public void run() {
                 while(true) {
+                    System.out.println(playing);
                     if (playing) {
                         playSound();
                         playing = false;
