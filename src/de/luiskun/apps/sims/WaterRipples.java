@@ -18,8 +18,6 @@ public class WaterRipples extends Application implements MouseListener {
 
     public WaterRipples() {
 
-
-
         addMouseListener(this);
 
     }
@@ -43,7 +41,8 @@ public class WaterRipples extends Application implements MouseListener {
             for (int x = 1; x < watersize-1; x++) {
                 current[x][y] = ((previous[x-1][y] + previous[x+1][y] + previous[x][y-1] + previous[x][y+1]) / 2) - current[x][y];
                 if (current[x][y] < 0) current[x][y] = 0;
-                current[x][y] *= damping;
+                current[x][y] *= (damping);
+
             }
         }
 

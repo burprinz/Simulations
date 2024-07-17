@@ -19,8 +19,8 @@ public class Vektor {
     }
 
     public Vektor(Vektor v) {
-        this.x = v.xAsInt();
-        this.y = v.yAsInt();
+        this.x = v.x;
+        this.y = v.y;
     }
 
     public Vektor (Point p) {
@@ -28,42 +28,49 @@ public class Vektor {
         this.y = p.getY();
     }
 
-    public void mult(double r) {
+    public Vektor mult(double r) {
         this.x *= r;
         this.y *= r;
+        return this;
     }
 
-    public void add(Vektor v) {
+    public Vektor add(Vektor v) {
         this.x += v.x;
         this.y += v.y;
+        return this;
     }
 
-    public void sub(Vektor v) {
+    public Vektor sub(Vektor v) {
         this.x -= v.x;
         this.y -= v.y;
+        return this;
     }
 
-    public void divide(double d) {
+    public Vektor divide(double d) {
         this.x = this.x / d;
         this.y = this.y / d;
+        return this;
     }
 
-    public void set(double x, double y) {
+    public Vektor set(double x, double y) {
         this.x = x;
         this.y = y;
+        return this;
     }
 
-    public void norm() {
+    public Vektor norm() {
         double dist = len();
 
         double cut = 1/dist;
 
         mult(cut);
+        return this;
     }
 
-    public void limit(double d) {
+    public Vektor limit(double d) {
         norm();
         mult(d);
+        return this;
     }
 
     public int xAsInt() {
@@ -160,7 +167,7 @@ public class Vektor {
     }
 
     public static double fullAngle(Vektor v1, Vektor v2) {
-        return Math.atan2(skalar(v1, v2), deteminat(v1, v2)) + Math.PI;
+        return Math.atan2(v1.y-v2.y, v1.x-v2.x);
     }
 
     public static boolean isSameInt(Vektor v1, Vektor v2) {

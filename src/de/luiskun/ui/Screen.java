@@ -226,7 +226,7 @@ public class Screen extends JPanel implements Runnable {
         sims.put("emptyslot", new ApplicationInfo() {
             @Override
             public Application getApplication() {
-                return new WaterRipples();
+                return new ProcedualGeneration();
             }
 
             @Override
