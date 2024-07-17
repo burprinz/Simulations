@@ -5,7 +5,7 @@ import de.luiskun.tools.Vektor;
 
 public class AnimalBodyPartGenerator {
 
-    public static PolygonInfos createRightLeg(Vektor startPos, double angle) {
+    public static PolygonInfos createRightLeg(Vektor startPos, double angle, double size) {
 
 
         int[] x, y;
@@ -51,6 +51,7 @@ public class AnimalBodyPartGenerator {
             y[i] += startPos.yAsInt();
         }
 
+        scalePoints(x,y,startPos,size/100d);
         rotatePoints(x,y,startPos,angle);
 
 
@@ -63,23 +64,8 @@ public class AnimalBodyPartGenerator {
        return po;
     }
 
-    public static void rotatePoints(int[] x, int[] y, Vektor p, double angle) {
-        for (int i = 0; i < x.length; i++) {
-            // Verschiebung
-            int tempX = x[i] - p.xAsInt();
-            int tempY = y[i] - p.yAsInt();
 
-            // Rotation
-            int rotatedX = (int) (tempX * Math.cos(angle) - tempY * Math.sin(angle));
-            int rotatedY = (int) (tempX * Math.sin(angle) + tempY * Math.cos(angle));
-
-            // Rückverschiebung
-            x[i] = rotatedX + p.xAsInt();
-            y[i] = rotatedY + p.yAsInt();
-        }
-    }
-
-    public static PolygonInfos createLeftLeg(Vektor startPos, double angle) {
+    public static PolygonInfos createLeftLeg(Vektor startPos, double angle, double size) {
 
 
         int[] x, y;
@@ -125,6 +111,7 @@ public class AnimalBodyPartGenerator {
             y[i] += startPos.yAsInt();
         }
 
+        scalePoints(x,y,startPos,size/100d);
         rotatePoints(x,y,startPos,angle);
 
 
@@ -135,6 +122,38 @@ public class AnimalBodyPartGenerator {
         po.am = 14;
 
         return po;
+    }
+
+    public static void rotatePoints(int[] x, int[] y, Vektor p, double angle) {
+        for (int i = 0; i < x.length; i++) {
+            // Verschiebung
+            int tempX = x[i] - p.xAsInt();
+            int tempY = y[i] - p.yAsInt();
+
+            // Rotation
+            int rotatedX = (int) (tempX * Math.cos(angle) - tempY * Math.sin(angle));
+            int rotatedY = (int) (tempX * Math.sin(angle) + tempY * Math.cos(angle));
+
+            // Rückverschiebung
+            x[i] = rotatedX + p.xAsInt();
+            y[i] = rotatedY + p.yAsInt();
+        }
+    }
+
+    public static void scalePoints(int[] x, int[] y, Vektor p, double scaleFactor) {
+        for (int i = 0; i < x.length; i++) {
+            // Verschiebung
+            int tempX = x[i] - p.xAsInt();
+            int tempY = y[i] - p.yAsInt();
+
+            // Skalierung
+            int scaledX = (int) (tempX * scaleFactor);
+            int scaledY = (int) (tempY * scaleFactor);
+
+            // Rückverschiebung
+            x[i] = scaledX + p.xAsInt();
+            y[i] = scaledY + p.yAsInt();
+        }
     }
 
 }

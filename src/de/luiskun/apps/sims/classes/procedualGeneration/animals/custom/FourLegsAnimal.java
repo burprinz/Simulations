@@ -6,7 +6,7 @@ import de.luiskun.tools.Vektor;
 
 public class FourLegsAnimal extends Animal {
     public FourLegsAnimal(double bodyThickness, Vektor startPos) {
-        super(18);
+        super(18, bodyThickness);
 
         int amountHead = 3;
         AnimalPart head = createHead(bodyThickness - bodyThickness/5, bodyThickness+bodyThickness/5, amountHead, null, startPos);

@@ -10,13 +10,16 @@ import java.awt.*;
 public class Animal implements Updatable {
 
     public int length;
+    public double bodysize;
+
     public AnimalPart head;
     Vektor frontPos;
 
     MovingSequence instructions;
 
-    public Animal(int length) {
+    public Animal(int length, double bodysize) {
         this.length = length;
+        this.bodysize = bodysize;
     }
 
     public void updateRelativePositions() {
@@ -83,10 +86,10 @@ public class Animal implements Updatable {
                             .add(Vektor.createFromAngle(leftAngle+Math.PI/2).mult((anchor.size/2)*0.9));
 
 
-                    PolygonInfos po = AnimalBodyPartGenerator.createRightLeg(rightArmPos, rightAngle);
+                    PolygonInfos po = AnimalBodyPartGenerator.createRightLeg(rightArmPos, rightAngle, bodysize);
                     g2.fillPolygon(po.x, po.y, po.am);
 
-                    po = AnimalBodyPartGenerator.createLeftLeg(leftArmPos, leftAngle);
+                    po = AnimalBodyPartGenerator.createLeftLeg(leftArmPos, leftAngle, bodysize);
                     g2.fillPolygon(po.x, po.y, po.am);
 
                 }

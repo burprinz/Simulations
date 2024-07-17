@@ -9,7 +9,7 @@ public class SnakeAnimal extends Animal {
     Vektor initialStartPos;
 
     public SnakeAnimal(int length, double headSize, double tailSize, int shrinkspeed, int distance, Vektor startPos) {
-        super(length);
+        super(length, headSize);
 
         double sizeDifference = headSize - tailSize;
         double shrinkStep = sizeDifference * (1d / (double) length / (double) shrinkspeed);

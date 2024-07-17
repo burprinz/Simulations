@@ -28,7 +28,7 @@ public class ProcedualGeneration extends Application {
     public void update() {
         if (currentAnimal != null) {
            seq.nextStep(currentAnimal.head);
-            currentAnimal.update();
+           currentAnimal.update();
         }
     }
 
