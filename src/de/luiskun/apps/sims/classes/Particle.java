@@ -28,7 +28,7 @@ public class Particle {
         if(!exploder) {
             vel = new Vektor(0,-minSpeed - r.nextInt(maxSpeed-minSpeed));
         } else {
-            vel = Vektor.random(20, 10);
+            vel = Vektor.random();
             vel.mult(r.nextDouble()*impact);
         }
 

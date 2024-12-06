@@ -1,6 +1,8 @@
 package de.luiskun.tools;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class Vektor {
@@ -122,7 +124,7 @@ public class Vektor {
         return Math.sqrt(Math.pow(v1.x - v2.x, 2) + Math.pow(v1.y - v2.y, 2));
     }
 
-    public static Vektor random(double rnd, double offset) {
+    public static Vektor random() {
         Random r = new Random();
         //return new Vektor(r.nextDouble()*rnd - offset, r.nextDouble()*rnd - offset);
         return createFromAngle(r.nextDouble()*(Math.PI*2));
@@ -173,5 +175,53 @@ public class Vektor {
     public static boolean isSameInt(Vektor v1, Vektor v2) {
         return v1.xAsInt() == v2.xAsInt() && v1.yAsInt() == v2.yAsInt();
     }
+
+    public static int getXForCenteredText(Graphics2D g2, String text, int width) {
+        return width / 2 - ((int) g2.getFontMetrics().getStringBounds(text, g2).getWidth()) / 2;
+    }
+
+    public static int getYForCenteredText(Graphics2D g2, int height) {
+        return (height - g2.getFontMetrics(g2.getFont()).getHeight()) / 2 + g2.getFontMetrics(g2.getFont()).getAscent();
+    }
+
+
+    public static int getWidthForText(Graphics2D g2, String text) {
+        return (int) g2.getFontMetrics().getStringBounds(text, g2).getWidth();
+    }
+    public static int getXForRightAllignmentText(Graphics2D g2, String text, int x) {
+        return (int) (x - g2.getFontMetrics().getStringBounds(text, g2).getWidth());
+    }
+
+    public static List<Vektor> bresenham(Vektor v1, Vektor v2) {
+        List<Vektor> points = new ArrayList<>();
+
+        v1 = new Vektor(v1);
+        v2 = new Vektor(v2);
+
+        int dx = Math.abs(v2.xAsInt() - v1.xAsInt());
+        int dy = Math.abs(v2.yAsInt() - v1.yAsInt());
+        int sx = v1.xAsInt() < v2.xAsInt() ? 1 : -1;
+        int sy = v1.yAsInt() < v2.yAsInt() ? 1 : -1;
+        int err = dx - dy;
+        int e2;
+
+        while (true) {
+            System.out.println("(" + v1.xAsInt() + ", " + v1.yAsInt() + ")");
+            points.add(new Vektor(v1));
+            if (v1.xAsInt() == v2.xAsInt() && v1.yAsInt() == v2.yAsInt()) break;
+            e2 = 2 * err;
+            if (e2 > -dy) {
+                err -= dy;
+                v1.x += sx;
+            }
+            if (e2 < dx) {
+                err += dx;
+                v1.y += sy;
+            }
+        }
+
+        return points;
+    }
+
 
 }
