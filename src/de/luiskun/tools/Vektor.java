@@ -206,7 +206,6 @@ public class Vektor {
         int e2;
 
         while (true) {
-            System.out.println("(" + v1.xAsInt() + ", " + v1.yAsInt() + ")");
             points.add(new Vektor(v1));
             if (v1.xAsInt() == v2.xAsInt() && v1.yAsInt() == v2.yAsInt()) break;
             e2 = 2 * err;

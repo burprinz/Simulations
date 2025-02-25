@@ -14,6 +14,11 @@ public class ColorPoint {
         this.v = v;
     }
 
+    public ColorPoint(ColorPoint cp) {
+        this.c = cp.c;
+        this.v = cp.v;
+    }
+
     public ColorPoint() {
 
     }

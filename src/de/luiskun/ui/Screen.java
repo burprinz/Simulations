@@ -226,7 +226,7 @@ public class Screen extends JPanel implements Runnable {
         sims.put("emptyslot", new ApplicationInfo() {
             @Override
             public Application getApplication() {
-                return new Rasterizer();
+                return new ProcedualGeneration();
             }
 
             @Override
@@ -235,7 +235,7 @@ public class Screen extends JPanel implements Runnable {
             }
         });
 
-        // PROCEDUAL GENERATION
+        // PROCEDUAL GENERATION, RASTERIZER
 
         initSort();
 
