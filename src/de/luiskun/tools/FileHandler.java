@@ -250,4 +250,8 @@ public class FileHandler {
         }
     }
 
+    public static File[] getFaceFiles() {
+        return new File("res/sims/faceDataset").listFiles();
+    }
+
 }
