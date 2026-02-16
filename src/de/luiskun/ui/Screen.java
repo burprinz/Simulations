@@ -287,7 +287,7 @@ public class Screen extends JPanel implements Runnable {
 
     private void initSort() {
         sort = new HashMap<>();
-        games.put("selectionsort", new ApplicationInfo() {
+        sort.put("selectionsort", new ApplicationInfo() {
             @Override
             public Application getApplication() {
                 return new SelectionSort();
@@ -298,7 +298,7 @@ public class Screen extends JPanel implements Runnable {
                 return 0;
             }
         });
-        games.put("bubblesort", new ApplicationInfo() {
+        sort.put("bubblesort", new ApplicationInfo() {
             @Override
             public Application getApplication() {
                 return new Bubblesort();
@@ -309,7 +309,7 @@ public class Screen extends JPanel implements Runnable {
                 return 1;
             }
         });
-        games.put("mergesort", new ApplicationInfo() {
+        sort.put("mergesort", new ApplicationInfo() {
             @Override
             public Application getApplication() {
                 return new MergeSort();
@@ -320,7 +320,7 @@ public class Screen extends JPanel implements Runnable {
                 return 2;
             }
         });
-        games.put("quicksort", new ApplicationInfo() {
+        sort.put("quicksort", new ApplicationInfo() {
             @Override
             public Application getApplication() {
                 return new Quicksort();
@@ -331,7 +331,7 @@ public class Screen extends JPanel implements Runnable {
                 return 3;
             }
         });
-        games.put("heapsort", new ApplicationInfo() {
+        sort.put("heapsort", new ApplicationInfo() {
             @Override
             public Application getApplication() {
                 return new Heapsort();
@@ -342,7 +342,7 @@ public class Screen extends JPanel implements Runnable {
                 return 4;
             }
         });
-        games.put("combsort", new ApplicationInfo() {
+        sort.put("combsort", new ApplicationInfo() {
             @Override
             public Application getApplication() {
                 return new Combsort();
@@ -353,7 +353,7 @@ public class Screen extends JPanel implements Runnable {
                 return 5;
             }
         });
-        games.put("cyclesort", new ApplicationInfo() {
+        sort.put("cyclesort", new ApplicationInfo() {
             @Override
             public Application getApplication() {
                 return new Cyclesort();
@@ -364,7 +364,7 @@ public class Screen extends JPanel implements Runnable {
                 return 6;
             }
         });
-        games.put("cocktailsort", new ApplicationInfo() {
+        sort.put("cocktailsort", new ApplicationInfo() {
             @Override
             public Application getApplication() {
                 return new Cocktailsort();
@@ -375,7 +375,7 @@ public class Screen extends JPanel implements Runnable {
                 return 7;
             }
         });
-        games.put("pancakesort", new ApplicationInfo() {
+        sort.put("pancakesort", new ApplicationInfo() {
             @Override
             public Application getApplication() {
                 return new Pancakesort();
@@ -386,7 +386,7 @@ public class Screen extends JPanel implements Runnable {
                 return 8;
             }
         });
-        games.put("gnomesort", new ApplicationInfo() {
+        sort.put("gnomesort", new ApplicationInfo() {
             @Override
             public Application getApplication() {
                 return new Gnomesort();
@@ -397,7 +397,7 @@ public class Screen extends JPanel implements Runnable {
                 return 9;
             }
         });
-        games.put("stoogesort", new ApplicationInfo() {
+        sort.put("stoogesort", new ApplicationInfo() {
             @Override
             public Application getApplication() {
                 return new Stoogesort();
@@ -408,7 +408,7 @@ public class Screen extends JPanel implements Runnable {
                 return 10;
             }
         });
-        games.put("oddevensort", new ApplicationInfo() {
+        sort.put("oddevensort", new ApplicationInfo() {
             @Override
             public Application getApplication() {
                 return new OddEvenSort();
@@ -420,8 +420,6 @@ public class Screen extends JPanel implements Runnable {
             }
         });
     }
-
-    boolean freeze = false;
 
     private void resetButtons(int page) {
 
@@ -447,14 +445,11 @@ public class Screen extends JPanel implements Runnable {
             size = sims.size();
             names = sortNames(sims.values().toArray(new ApplicationInfo[0]), sims.keySet().toArray(new String[0]));
         } else if (mode == GAME) {
-            //size = allGames.size();
             size = games.size();
             names = sortNames(games.values().toArray(new ApplicationInfo[0]), games.keySet().toArray(new String[0]));
         } else {
             size = sort.size();
             names = sortNames(sort.values().toArray(new ApplicationInfo[0]), sort.keySet().toArray(new String[0]));
-
-
         }
 
         if (names != null) {
@@ -462,10 +457,8 @@ public class Screen extends JPanel implements Runnable {
                 if (i+start >= size) {
                     break;
                 }
-
                 int x = 25 + (i%3) * 300;
                 int y = 25 + (i/3) * 217;
-
                 JButton button = new JButton(new ImageIcon("res/previews/" + names[start+i] + ".png"));
                 button.setBounds(x, y, 250, 167);
                 button.setActionCommand(names[start+i]);
