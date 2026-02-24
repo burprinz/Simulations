@@ -8,4 +8,9 @@ public class MazeTile {
     public int x, y;
     public boolean isVisited = false;
 
+
+    public void print() {
+        System.out.println(x+" "+y+" up:"+upOpen+" down:"+downOpen+" right:"+rightOpen+" left:"+leftOpen);
+    }
+
 }

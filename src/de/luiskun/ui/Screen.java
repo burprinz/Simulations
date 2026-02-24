@@ -6,9 +6,7 @@ import de.luiskun.apps.games.centipede.Centipede;
 import de.luiskun.apps.games.snake.Snake;
 import de.luiskun.apps.sorting.*;
 import de.luiskun.tools.FileHandler;
-import de.luiskun.apps.sims.WeightedVoronoi;
 import de.luiskun.apps.sims.*;
-import de.luiskun.apps.games.spaceblaster.SpaceBlaster;
 
 import javax.swing.*;
 import java.awt.*;
@@ -226,7 +224,7 @@ public class Screen extends JPanel implements Runnable {
         sims.put("emptyslot", new ApplicationInfo() {
             @Override
             public Application getApplication() {
-                return new FaceAverager();
+                return new StreetViewer();
             }
 
             @Override

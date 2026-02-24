@@ -222,5 +222,8 @@ public class Vektor {
         return points;
     }
 
+    public static Vektor polarToCartesian(double radius, double angle) {
+        return new Vektor(radius*Math.cos(angle), radius*Math.sin(angle));
+    }
 
 }

@@ -27,6 +27,8 @@ public class Main {
         new Main();
     }
     public Main() {
+
+
         JFrame frame = new JFrame();
         Screen s = new Screen();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
