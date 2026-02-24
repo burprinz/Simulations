@@ -34,15 +34,13 @@ public class Screen extends JPanel implements Runnable {
     Application selected;
     private ButtonHandler bh = new ButtonHandler();
 
-    private JButton mandelbrotB, elemCelAutoB, fallingSandB, timesTablesCarB;
-
     private BufferedImage background;
 
     List<JButton> buttons;
 
     int currentPage = 0;
 
-    int mode = 0;
+    Map<String, ApplicationInfo> currentCategory;
 
     Map<String, ApplicationInfo> sims;
     Map<String, ApplicationInfo> games;
@@ -53,30 +51,58 @@ public class Screen extends JPanel implements Runnable {
         this.setDoubleBuffered(true);
         this.setLayout(null);
 
-        games = new HashMap<>();
-        games.put("snake", new ApplicationInfo() {
-            @Override
-            public Application getApplication() {
-                return new Snake();
-            }
+        initSims();
+        initGames();
+        initSort();
+
+        background = FileHandler.SetupImage("res/previews/background.png", WIDTH, HEIGHT);
+
+        KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(new KeyEventDispatcher() {
 
             @Override
-            public int getPosition() {
-                return 0;
+            public boolean dispatchKeyEvent(KeyEvent ke) {
+                synchronized (Mandelbrot.class) {
+                    switch (ke.getID()) {
+                        case KeyEvent.KEY_PRESSED:
+                            switch (ke.getKeyCode()) {
+                                case KeyEvent.VK_Z:
+                                    if (selected != null) {
+                                        remove(selected);
+                                        selected = null;
+                                    }
+                                    showUI();
+                                    repaint();
+                                    break;
+                                case KeyEvent.VK_LEFT:
+                                    if (selected == null) {
+                                        currentPage--;
+                                        resetButtons(currentPage);
+                                    }
+                                    break;
+                                case KeyEvent.VK_RIGHT:
+                                    if (selected == null) {
+                                        currentPage++;
+                                        resetButtons(currentPage);
+                                    }
+                                    break;
+                            }
+                            break;
+                        case KeyEvent.KEY_RELEASED:
+
+                            break;
+                    }
+                    return false;
+                }
             }
         });
-        games.put("centipede", new ApplicationInfo() {
-            @Override
-            public Application getApplication() {
-                return new Centipede();
-            }
 
-            @Override
-            public int getPosition() {
-                return 1;
-            }
-        });
+        buttons = new ArrayList<>();
 
+        switchMode(SIM);
+        resetButtons(currentPage);
+    }
+
+    private void initSims() {
         sims = new HashMap<>();
         sims.put("mandelbrot", new ApplicationInfo() {
             @Override
@@ -232,55 +258,32 @@ public class Screen extends JPanel implements Runnable {
                 return 13;
             }
         });
+    }
 
-        // PROCEDUAL GENERATION, RASTERIZER
-
-        initSort();
-
-        background = FileHandler.SetupImage("res/previews/background.png", WIDTH, HEIGHT);
-
-        KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(new KeyEventDispatcher() {
+    private void initGames() {
+        games = new HashMap<>();
+        games.put("snake", new ApplicationInfo() {
+            @Override
+            public Application getApplication() {
+                return new Snake();
+            }
 
             @Override
-            public boolean dispatchKeyEvent(KeyEvent ke) {
-                synchronized (Mandelbrot.class) {
-                    switch (ke.getID()) {
-                        case KeyEvent.KEY_PRESSED:
-                            switch (ke.getKeyCode()) {
-                                case KeyEvent.VK_Z:
-                                    if (selected != null) {
-                                        remove(selected);
-                                        selected = null;
-                                    }
-                                    showUI();
-                                    repaint();
-                                    break;
-                                case KeyEvent.VK_LEFT:
-                                    if (selected == null) {
-                                        currentPage--;
-                                        resetButtons(currentPage);
-                                    }
-                                    break;
-                                case KeyEvent.VK_RIGHT:
-                                    if (selected == null) {
-                                        currentPage++;
-                                        resetButtons(currentPage);
-                                    }
-                                    break;
-                            }
-                            break;
-                        case KeyEvent.KEY_RELEASED:
-
-                            break;
-                    }
-                    return false;
-                }
+            public int getPosition() {
+                return 0;
             }
         });
+        games.put("centipede", new ApplicationInfo() {
+            @Override
+            public Application getApplication() {
+                return new Centipede();
+            }
 
-        buttons = new ArrayList<>();
-
-        resetButtons(currentPage);
+            @Override
+            public int getPosition() {
+                return 1;
+            }
+        });
     }
 
     private void initSort() {
@@ -432,23 +435,10 @@ public class Screen extends JPanel implements Runnable {
         page = getAcualPage(page);
         this.currentPage = page;
 
-        int amountButtons = getAmountButtons(page);
-
         int start = page * 9;
 
-        int size;
-        String[] names = null;
-
-        if (mode == SIM) {
-            size = sims.size();
-            names = sortNames(sims.values().toArray(new ApplicationInfo[0]), sims.keySet().toArray(new String[0]));
-        } else if (mode == GAME) {
-            size = games.size();
-            names = sortNames(games.values().toArray(new ApplicationInfo[0]), games.keySet().toArray(new String[0]));
-        } else {
-            size = sort.size();
-            names = sortNames(sort.values().toArray(new ApplicationInfo[0]), sort.keySet().toArray(new String[0]));
-        }
+        int size = currentCategory.size();
+        String[] names = sortNames(currentCategory.values().toArray(new ApplicationInfo[0]), currentCategory.keySet().toArray(new String[0]));
 
         if (names != null) {
             for (int i = 0; i < 9; i++) {
@@ -526,15 +516,7 @@ public class Screen extends JPanel implements Runnable {
 
     private int getAcualPage(int page) {
         final int buttonsPerSite = 9;
-        int amApps;
-
-        if (mode == SIM) {
-            amApps = sims.size();
-        } else if (mode == GAME) {
-            amApps = games.size();
-        } else {
-            amApps = sort.size();
-        }
+        int amApps = currentCategory.size();
 
         if (page < 0) {
             page = 0;
@@ -550,15 +532,7 @@ public class Screen extends JPanel implements Runnable {
 
     private int getAmountButtons(int page) {
         final int start = page * 9;
-        int size;
-
-        if (mode == SIM) {
-            size = sims.size();
-        } else if (mode == GAME) {
-            size = games.size();
-        }else {
-            size = sort.size();
-        }
+        int size = currentCategory.size();
 
         int count = 0;
 
@@ -601,19 +575,8 @@ public class Screen extends JPanel implements Runnable {
     }
 
     private int getAmountPages() {
-        int am;
-
-        if (mode == SIM) {
-            am = sims.size()/9;
-            if (sims.size()%9>0)am++;
-        } else if (mode == GAME) {
-            am = games.size()/9;
-            if (games.size()%9>0)am++;
-        } else {
-            am = sort.size()/9;
-            if (sort.size()%9>0)am++;
-        }
-
+        int am = currentCategory.size()/9;
+        if (currentCategory.size()%9>0)am++;
         return am;
     }
 
@@ -672,8 +635,17 @@ public class Screen extends JPanel implements Runnable {
     }
 
     private void switchMode(int sel) {
-        mode = sel;
-
+        switch(sel) {
+            case SIM:
+                currentCategory = sims;
+                break;
+            case GAME:
+                currentCategory = games;
+                break;
+            case SORT:
+                currentCategory = sort;
+                break;
+        }
         resetButtons(0);
     }
 
@@ -701,14 +673,7 @@ public class Screen extends JPanel implements Runnable {
             switchMode(SIM);
             return null;
         }else {
-            if (mode == SIM) {
-                return sims.get(name).getApplication();
-            } else if (mode == GAME) {
-                return games.get(name).getApplication();
-            } if (mode == SORT) {
-                return sort.get(name).getApplication();
-            }
+            return currentCategory.get(name).getApplication();
         }
-        return null;
     }
 }
