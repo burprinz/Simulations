@@ -23,10 +23,6 @@ public class Screen extends JPanel implements Runnable {
 
     public static final int WIDTH = 900, HEIGHT = 700;
 
-    public static final int SIM = 0;
-    public static final int GAME = 1;
-    public static final int SORT = 2;
-
 
     private Thread thread;
     private int fps = 60;
@@ -40,20 +36,14 @@ public class Screen extends JPanel implements Runnable {
 
     int currentPage = 0;
 
-    Map<String, ApplicationInfo> currentCategory;
-
-    Map<String, ApplicationInfo> sims;
-    Map<String, ApplicationInfo> games;
-    Map<String, ApplicationInfo> sort;
+    Applications apps;
 
     public Screen() {
         this.setPreferredSize(new Dimension(WIDTH, HEIGHT));
         this.setDoubleBuffered(true);
         this.setLayout(null);
 
-        initSims();
-        initGames();
-        initSort();
+        this.apps = new Applications();
 
         background = FileHandler.SetupImage("res/previews/background.png", WIDTH, HEIGHT);
 
@@ -67,6 +57,7 @@ public class Screen extends JPanel implements Runnable {
                             switch (ke.getKeyCode()) {
                                 case KeyEvent.VK_Z:
                                     if (selected != null) {
+                                        selected.close();
                                         remove(selected);
                                         selected = null;
                                     }
@@ -98,328 +89,7 @@ public class Screen extends JPanel implements Runnable {
 
         buttons = new ArrayList<>();
 
-        switchMode(SIM);
         resetButtons(currentPage);
-    }
-
-    private void initSims() {
-        sims = new HashMap<>();
-        sims.put("mandelbrot", new ApplicationInfo() {
-            @Override
-            public Application getApplication() {
-                return new Mandelbrot();
-            }
-
-            @Override
-            public int getPosition() {
-                return 0;
-            }
-        });
-        sims.put("elemcelauto", new ApplicationInfo() {
-            @Override
-            public Application getApplication() {
-                return new ElementaryCellularAutomata();
-            }
-
-            @Override
-            public int getPosition() {
-                return 5;
-            }
-        });
-        sims.put("sandsim", new ApplicationInfo() {
-            @Override
-            public Application getApplication() {
-                return new FallingSand();
-            }
-
-            @Override
-            public int getPosition() {
-                return 6;
-            }
-        });
-        sims.put("timestablescar", new ApplicationInfo() {
-            @Override
-            public Application getApplication() {
-                return new TimesTablesCardioid();
-            }
-
-            @Override
-            public int getPosition() {
-                return 7;
-            }
-        });
-        sims.put("phyllotaxis", new ApplicationInfo() {
-            @Override
-            public Application getApplication() {
-                return new Phyllotaxis();
-            }
-
-            @Override
-            public int getPosition() {
-                return 8;
-            }
-        });
-        sims.put("reactiondiffusion", new ApplicationInfo() {
-            @Override
-            public Application getApplication() {
-                return new ReactionDiffusion();
-            }
-
-            @Override
-            public int getPosition() {
-                return 9;
-            }
-        });
-        sims.put("firework", new ApplicationInfo() {
-            @Override
-            public Application getApplication() {
-                return new Fireworks();
-            }
-
-            @Override
-            public int getPosition() {
-                return 1;
-            }
-        });
-        sims.put("sandpiles", new ApplicationInfo() {
-            @Override
-            public Application getApplication() {
-                return new Sandpiles();
-            }
-
-            @Override
-            public int getPosition() {
-                return 2;
-            }
-        });
-        sims.put("boids", new ApplicationInfo() {
-            @Override
-            public Application getApplication() {
-                return new Boids();
-            }
-
-            @Override
-            public int getPosition() {
-                return 3;
-            }
-        });
-        sims.put("barnsleyfern", new ApplicationInfo() {
-            @Override
-            public Application getApplication() {
-                return new BarnsleyFern();
-            }
-
-            @Override
-            public int getPosition() {
-                return 10;
-            }
-        });
-        sims.put("gameoflife", new ApplicationInfo() {
-            @Override
-            public Application getApplication() {
-                return new GameOfLife();
-            }
-
-            @Override
-            public int getPosition() {
-                return 11;
-            }
-        });
-        sims.put("bouncingcircle", new ApplicationInfo() {
-            @Override
-            public Application getApplication() {
-                return new BouncingCircle();
-            }
-
-            @Override
-            public int getPosition() {
-                return 4;
-            }
-        });
-        sims.put("searching", new ApplicationInfo() {
-            @Override
-            public Application getApplication() {
-                return new Pathfinding();
-            }
-
-            @Override
-            public int getPosition() {
-                return 12;
-            }
-        });
-        sims.put("emptyslot", new ApplicationInfo() {
-            @Override
-            public Application getApplication() {
-                return new StreetViewer();
-            }
-
-            @Override
-            public int getPosition() {
-                return 13;
-            }
-        });
-    }
-
-    private void initGames() {
-        games = new HashMap<>();
-        games.put("snake", new ApplicationInfo() {
-            @Override
-            public Application getApplication() {
-                return new Snake();
-            }
-
-            @Override
-            public int getPosition() {
-                return 0;
-            }
-        });
-        games.put("centipede", new ApplicationInfo() {
-            @Override
-            public Application getApplication() {
-                return new Centipede();
-            }
-
-            @Override
-            public int getPosition() {
-                return 1;
-            }
-        });
-    }
-
-    private void initSort() {
-        sort = new HashMap<>();
-        sort.put("selectionsort", new ApplicationInfo() {
-            @Override
-            public Application getApplication() {
-                return new SelectionSort();
-            }
-
-            @Override
-            public int getPosition() {
-                return 0;
-            }
-        });
-        sort.put("bubblesort", new ApplicationInfo() {
-            @Override
-            public Application getApplication() {
-                return new Bubblesort();
-            }
-
-            @Override
-            public int getPosition() {
-                return 1;
-            }
-        });
-        sort.put("mergesort", new ApplicationInfo() {
-            @Override
-            public Application getApplication() {
-                return new MergeSort();
-            }
-
-            @Override
-            public int getPosition() {
-                return 2;
-            }
-        });
-        sort.put("quicksort", new ApplicationInfo() {
-            @Override
-            public Application getApplication() {
-                return new Quicksort();
-            }
-
-            @Override
-            public int getPosition() {
-                return 3;
-            }
-        });
-        sort.put("heapsort", new ApplicationInfo() {
-            @Override
-            public Application getApplication() {
-                return new Heapsort();
-            }
-
-            @Override
-            public int getPosition() {
-                return 4;
-            }
-        });
-        sort.put("combsort", new ApplicationInfo() {
-            @Override
-            public Application getApplication() {
-                return new Combsort();
-            }
-
-            @Override
-            public int getPosition() {
-                return 5;
-            }
-        });
-        sort.put("cyclesort", new ApplicationInfo() {
-            @Override
-            public Application getApplication() {
-                return new Cyclesort();
-            }
-
-            @Override
-            public int getPosition() {
-                return 6;
-            }
-        });
-        sort.put("cocktailsort", new ApplicationInfo() {
-            @Override
-            public Application getApplication() {
-                return new Cocktailsort();
-            }
-
-            @Override
-            public int getPosition() {
-                return 7;
-            }
-        });
-        sort.put("pancakesort", new ApplicationInfo() {
-            @Override
-            public Application getApplication() {
-                return new Pancakesort();
-            }
-
-            @Override
-            public int getPosition() {
-                return 8;
-            }
-        });
-        sort.put("gnomesort", new ApplicationInfo() {
-            @Override
-            public Application getApplication() {
-                return new Gnomesort();
-            }
-
-            @Override
-            public int getPosition() {
-                return 9;
-            }
-        });
-        sort.put("stoogesort", new ApplicationInfo() {
-            @Override
-            public Application getApplication() {
-                return new Stoogesort();
-            }
-
-            @Override
-            public int getPosition() {
-                return 10;
-            }
-        });
-        sort.put("oddevensort", new ApplicationInfo() {
-            @Override
-            public Application getApplication() {
-                return new OddEvenSort();
-            }
-
-            @Override
-            public int getPosition() {
-                return 11;
-            }
-        });
     }
 
     private void resetButtons(int page) {
@@ -437,8 +107,9 @@ public class Screen extends JPanel implements Runnable {
 
         int start = page * 9;
 
-        int size = currentCategory.size();
-        String[] names = sortNames(currentCategory.values().toArray(new ApplicationInfo[0]), currentCategory.keySet().toArray(new String[0]));
+        int size = apps.getCurrentSize();
+        String[] names = sortNames(apps.getCurrentCategory().values().toArray(new ApplicationInfo[0]),
+                                    apps.getCurrentCategory().keySet().toArray(new String[0]));
 
         if (names != null) {
             for (int i = 0; i < 9; i++) {
@@ -516,7 +187,7 @@ public class Screen extends JPanel implements Runnable {
 
     private int getAcualPage(int page) {
         final int buttonsPerSite = 9;
-        int amApps = currentCategory.size();
+        int amApps = apps.getCurrentSize();
 
         if (page < 0) {
             page = 0;
@@ -532,7 +203,7 @@ public class Screen extends JPanel implements Runnable {
 
     private int getAmountButtons(int page) {
         final int start = page * 9;
-        int size = currentCategory.size();
+        int size = apps.getCurrentSize();
 
         int count = 0;
 
@@ -575,8 +246,8 @@ public class Screen extends JPanel implements Runnable {
     }
 
     private int getAmountPages() {
-        int am = currentCategory.size()/9;
-        if (currentCategory.size()%9>0)am++;
+        int am = apps.getCurrentSize()/9;
+        if (apps.getCurrentSize()%9>0)am++;
         return am;
     }
 
@@ -635,17 +306,7 @@ public class Screen extends JPanel implements Runnable {
     }
 
     private void switchMode(int sel) {
-        switch(sel) {
-            case SIM:
-                currentCategory = sims;
-                break;
-            case GAME:
-                currentCategory = games;
-                break;
-            case SORT:
-                currentCategory = sort;
-                break;
-        }
+        apps.switchCurrentCategory(sel);
         resetButtons(0);
     }
 
@@ -653,6 +314,7 @@ public class Screen extends JPanel implements Runnable {
 
         @Override
         public void actionPerformed(ActionEvent e) {
+
             selected = getApplication(e.getActionCommand());
             if (selected != null) {
                 selected.setBounds(0,0,WIDTH, HEIGHT);
@@ -664,16 +326,16 @@ public class Screen extends JPanel implements Runnable {
 
     private Application getApplication(String name) {
         if (name.equals("gameSwitch")) {
-            switchMode(GAME);
+            switchMode(Applications.GAME);
             return null;
         } else if (name.equals("colorSwitch")) {
-            switchMode(SORT);
+            switchMode(Applications.SORT);
             return null;
         } else if (name.equals("simSwitch")) {
-            switchMode(SIM);
+            switchMode(Applications.SIM);
             return null;
         }else {
-            return currentCategory.get(name).getApplication();
+            return apps.getCurrentApp(name);
         }
     }
 }

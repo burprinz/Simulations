@@ -155,6 +155,12 @@ public class BouncingCircle extends Application implements ActionListener, Range
     }
 
     @Override
+    public void close() {
+        shouldStop = true;
+        sound.interrupt();
+    }
+
+    @Override
     public void update() {
 
         if (running) {
@@ -330,12 +336,12 @@ public class BouncingCircle extends Application implements ActionListener, Range
 
     Thread sound;
     boolean playing = false;
+    boolean shouldStop = false;
     private void startSound() {
         sound = new Thread(new Runnable() {
             @Override
             public void run() {
-                while(true) {
-                    System.out.println(playing);
+                while(!shouldStop) {
                     if (playing) {
                         playSound();
                         playing = false;
