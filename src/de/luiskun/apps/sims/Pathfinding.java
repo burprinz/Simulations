@@ -330,8 +330,9 @@ public class Pathfinding extends Application implements RangeSelection {
                     MazeTile t = maze[x][y];
 
                     if (buffer.size() > 0) {
+                        MazeTile last = buffer.get(buffer.size() - 1);
 
-                        if (buffer.get(buffer.size()-1) != null && x == buffer.get(buffer.size()-1).x && y == buffer.get(buffer.size()-1).y) {
+                        if (last != null && x == last.x && y == last.y) {
                             g2.setColor(new Color(167, 199, 231));
                             g2.fillRect(x*cellSize, y*cellSize, cellSize, cellSize);
                         }
